@@ -1,809 +1,803 @@
 /* ============================================
-   STYLE.CSS — Zavira Haramain
-
-   CARA MENGGANTI WARNA:
-   Ubah nilai variabel di bagian :root di bawah.
-   Semua warna menggunakan variabel, cukup ganti
-   di satu tempat saja dan seluruh website berubah.
+   STYLE.CSS - Zavira Haramain Landing Page
    ============================================ */
 
-/* ========================
-   VARIABEL WARNA
-   Sesuaikan warna di sini
-   ======================== */
+/* === VARIABEL WARNA (GANTI DI SINI UNTUK MENYESUAIKAN WARNA) === */
 :root {
-    /* Warna Utama / Primary */
-    --primary: #2d6a4f;
-    --primary-dark: #1b4332;
-    --primary-light: #52b788;
+  /* Warna Utama / Primary: Hijau */
+  --primary: #1B7A3D;
+  --primary-light: #E8F5E9;
+  --primary-dark: #145C2E;
+  --primary-yellow: #F5C518;  /* Aksen kuning */
 
-    /* Warna Sekunder / Secondary */
-    --secondary: #1e3a5f;
-    --secondary-light: #e8f4f8;
+  /* Warna Sekunder / Secondary: Biru */
+  --secondary: #1565C0;
+  --secondary-light: #E3F2FD;
+  --secondary-dark: #0D47A1;
 
-    /* Warna Aksen */
-    --accent: #64748b;
-    --accent-light: #f1f5f9;
+  /* Warna Aksen: Abu-abu */
+  --accent: #9E9E9E;
+  --accent-light: #F5F5F5;
 
-    /* Warna Background */
-    --bg-main: #ffffff;
-    --bg-section: #f0f4f8;
-    --bg-card: #e8f4f8;
+  /* Warna Background */
+  --bg-main: #FFFFFF;
+  --bg-card: #E3F2FD;
+  --bg-section-alt: #F8FAFC;
 
-    /* Warna Teks */
-    --text-primary: #1a1a2e;
-    --text-secondary: #ffffff;
-    --text-muted: #64748b;
+  /* Warna Teks */
+  --text-primary: #1F2937;
+  --text-secondary: #FFFFFF;
+  --text-muted: #6B7280;
 
-    /* Warna Tambahan */
-    --border-color: #e2e8f0;
-    --shadow-soft: rgba(0, 0, 0, 0.06);
-    --shadow-medium: rgba(0, 0, 0, 0.12);
-
-    /* Border Radius */
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 16px;
-    --radius-full: 50%;
-
-    /* Transisi */
-    --transition: 0.25s ease;
+  /* Ukuran & Efek */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-full: 9999px;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.14);
+  --transition: all 0.3s ease;
+  --max-width: 1140px;
 }
 
-/* ========================
-   RESET & BASE
-   Menghapus margin/padding default
-   ======================== */
+
+/* === RESET & BASE === */
 *,
 *::before,
 *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html {
-    scroll-behavior: smooth;
-    scroll-padding-top: 72px;
+  scroll-behavior: smooth;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    line-height: 1.7;
-    overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-main);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
 
 img {
-    max-width: 100%;
-    height: auto;
-    display: block;
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 a {
-    text-decoration: none;
-    color: inherit;
-    transition: var(--transition);
+  text-decoration: none;
+  color: inherit;
 }
 
-ul, ol {
-    list-style: none;
+ul {
+  list-style: none;
 }
 
-/* ========================
-   CONTAINER
-   Membatasi lebar konten
-   ======================== */
+/* Container umum */
 .container {
-    width: 100%;
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: 0 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-/* ========================
-   SECTION UMUM
-   ======================== */
-.section {
-    padding: 80px 0;
-}
 
-.section-alt {
-    background-color: var(--bg-section);
-}
-
-.section-title {
-    font-size: 30px;
-    font-weight: 800;
-    text-align: center;
-    margin-bottom: 12px;
-    line-height: 1.3;
-}
-
-.section-desc {
-    font-size: 16px;
-    color: var(--text-muted);
-    text-align: center;
-    max-width: 620px;
-    margin: 0 auto 48px;
-    line-height: 1.7;
-}
-
-/* ========================
-   ANIMASI SCROLL
-   Elemen muncul saat discroll
-   ======================== */
-.animate-on-scroll {
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.animate-on-scroll.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* ========================
-   NAVBAR
-   ======================== */
+/* === NAVBAR === */
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 64px;
-    background: var(--bg-main);
-    border-bottom: 1px solid var(--border-color);
-    z-index: 1000;
-    box-shadow: 0 1px 6px var(--shadow-soft);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+  transition: var(--transition);
 }
 
 .navbar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
 }
 
-.navbar-brand {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--primary);
-}
-
-.navbar-brand span {
-    color: var(--primary-light);
+.navbar-logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.02em;
 }
 
 .navbar-menu {
-    display: flex;
-    align-items: center;
-    gap: 2px;
+  display: flex;
+  gap: 8px;
 }
 
-.navbar-menu a {
-    padding: 8px 14px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--accent);
-    border-radius: var(--radius-sm);
+.nav-link {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
 }
 
-.navbar-menu a:hover {
-    color: var(--primary);
-    background: var(--bg-section);
+.nav-link:hover {
+  color: var(--primary);
+  background: var(--primary-light);
 }
 
-/* Hamburger Button */
-.navbar-hamburger {
-    display: none;
-    background: none;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+/* Hamburger Button (Mobile) */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
 }
 
-.navbar-hamburger span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: var(--text-primary);
-    border-radius: 2px;
-    transition: var(--transition);
+.hamburger-line {
+  display: block;
+  width: 24px;
+  height: 2.5px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: var(--transition);
 }
 
-/* Animasi hamburger -> X */
-.navbar-hamburger.active span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+/* Animasi hamburger saat aktif */
+.hamburger.active .hamburger-line:nth-child(1) {
+  transform: translateY(7.5px) rotate(45deg);
 }
 
-.navbar-hamburger.active span:nth-child(2) {
-    opacity: 0;
+.hamburger.active .hamburger-line:nth-child(2) {
+  opacity: 0;
 }
 
-.navbar-hamburger.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
+.hamburger.active .hamburger-line:nth-child(3) {
+  transform: translateY(-7.5px) rotate(-45deg);
 }
 
-/* ========================
-   HERO SECTION
-   2 kolom: teks kiri, gambar kanan
-   ======================== */
+
+/* === HERO SECTION === */
 .hero {
-    padding-top: 120px;
-    padding-bottom: 80px;
-    background: linear-gradient(160deg, var(--bg-section) 0%, var(--bg-main) 50%);
+  padding: 120px 0 80px;
+  background: linear-gradient(135deg, var(--bg-main) 0%, var(--primary-light) 50%, var(--secondary-light) 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 .hero-inner {
-    display: flex;
-    align-items: center;
-    gap: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
 }
 
-.hero-text { flex: 1; }
-
 .hero-badge {
-    display: inline-block;
-    background: var(--bg-card);
-    color: var(--primary);
-    padding: 5px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 16px;
+  display: inline-block;
+  background: var(--primary-yellow);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  margin-bottom: 20px;
 }
 
 .hero-title {
-    font-size: 44px;
-    font-weight: 900;
-    line-height: 1.15;
-    margin-bottom: 8px;
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--primary-dark);
+  margin-bottom: 12px;
+  letter-spacing: -0.03em;
 }
 
 .hero-tagline {
-    font-size: 19px;
-    font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 16px;
-    line-height: 1.4;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--secondary);
+  margin-bottom: 20px;
 }
 
 .hero-desc {
-    font-size: 16px;
-    color: var(--text-muted);
-    line-height: 1.8;
-    margin-bottom: 28px;
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+  line-height: 1.8;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .hero-image {
-    flex: 1;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: 0 8px 30px var(--shadow-medium);
-    border: 3px solid var(--bg-card);
+  display: flex;
+  justify-content: center;
 }
 
-.hero-image img {
-    width: 100%;
-    height: 380px;
-    object-fit: cover;
+.hero-img {
+  max-width: 100%;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hover);
+  transition: var(--transition);
 }
 
-/* ========================
-   TOMBOL
-   ======================== */
+.hero-img:hover {
+  transform: translateY(-4px);
+}
+
+
+/* === TOMBOL / BUTTON === */
 .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 28px;
-    border-radius: var(--radius-md);
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: var(--transition);
-    text-align: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
 }
 
 .btn-primary {
-    background: var(--primary);
-    color: var(--text-secondary);
-    border-color: var(--primary);
+  background: var(--primary);
+  color: var(--text-secondary);
+  border-color: var(--primary);
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
-    border-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(45, 106, 79, 0.3);
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 .btn-outline {
-    background: transparent;
-    color: var(--primary);
-    border-color: var(--primary);
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .btn-outline:hover {
-    background: var(--primary);
-    color: var(--text-secondary);
-    transform: translateY(-2px);
+  background: var(--primary);
+  color: var(--text-secondary);
+  transform: translateY(-2px);
 }
 
-.btn-access {
-    background: var(--text-secondary);
-    color: var(--primary);
-    border-color: var(--text-secondary);
-    font-size: 16px;
-    padding: 14px 36px;
+.btn-lg {
+  padding: 18px 36px;
+  font-size: 1.05rem;
 }
 
-.btn-access:hover {
-    background: #f0f0f0;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+
+/* === SECTION UMUM === */
+.section {
+  padding: 80px 0;
 }
 
-.btn-group {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+.section:nth-child(even) {
+  background: var(--bg-section-alt);
 }
 
-/* ========================
-   SECTION MASALAH
-   3 card dalam grid
-   ======================== */
-.problem-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+.section-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 48px;
 }
 
-.problem-card {
-    background: var(--bg-main);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 28px 24px;
-    position: relative;
-    overflow: hidden;
-    transition: var(--transition);
+.section-badge {
+  display: inline-block;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  margin-bottom: 16px;
 }
 
-/* Garis hijau di atas card */
-.problem-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--primary);
+.section-badge-light {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-secondary);
 }
 
-.problem-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px var(--shadow-medium);
-    border-color: var(--primary-light);
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-.problem-number {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: 800;
-    margin-bottom: 16px;
+.section-subtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.7;
 }
 
-.problem-card h3 {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    line-height: 1.4;
+.section-note {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--accent);
 }
 
-.problem-card p {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.7;
+
+/* === CARD UMUM === */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
 }
 
-.problem-target {
-    text-align: center;
-    margin-top: 32px;
-    font-size: 14px;
-    color: var(--text-muted);
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
 }
 
-.problem-target strong {
-    color: var(--primary);
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 16px;
 }
 
-/* ========================
-   SECTION SOLUSI
-   Teks kiri, gambar kanan
-   ======================== */
+.card-icon-lg {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.card-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+
+/* === GRID CARD === */
+.card-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+
+/* === SOLUSI SECTION === */
 .solusi-inner {
-    display: flex;
-    align-items: flex-start;
-    gap: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
 }
 
-.solution-text { flex: 1; }
-
-.solution-text h2 {
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 16px;
-    line-height: 1.3;
+.solusi-image {
+  position: sticky;
+  top: 100px;
 }
 
-.solution-text > p {
-    font-size: 15px;
-    color: var(--text-muted);
-    line-height: 1.8;
-    margin-bottom: 12px;
+.solusi-img {
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hover);
+  object-fit: cover;
+  transition: var(--transition);
 }
 
-.solution-cara {
-    background: var(--bg-card);
-    border-left: 4px solid var(--primary);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    padding: 16px 20px;
-    margin: 20px 0;
-    font-size: 14px;
-    color: #334155;
-    line-height: 1.7;
+.solusi-img:hover {
+  transform: scale(1.02);
 }
 
-.solution-cara strong {
-    color: var(--primary);
+.solusi-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 24px;
 }
 
-.solution-benefits { margin-top: 24px; }
-
-.solution-benefits h3 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 16px;
+.solusi-cara {
+  background: var(--primary-light);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--primary);
 }
 
-.benefit-item {
-    display: flex;
-    gap: 14px;
-    margin-bottom: 18px;
+.solusi-cara-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
 }
 
-.benefit-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-sm);
-    background: var(--primary);
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 2px;
+.solusi-cara p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.7;
 }
 
-.benefit-item h4 {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 4px;
+/* Daftar Manfaat */
+.manfaat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.benefit-item p {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.6;
+.manfaat-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
 }
 
-.solution-image {
-    flex: 1;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    box-shadow: 0 4px 20px var(--shadow-soft);
-    border: 1px solid var(--border-color);
+.manfaat-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.solution-image img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+.manfaat-item strong {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 4px;
 }
 
-/* ========================
-   SECTION FITUR
-   Grid 2x2 card
-   ======================== */
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+.manfaat-item p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
 }
 
-.feature-card {
-    background: var(--bg-main);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 28px 24px;
-    transition: var(--transition);
+
+/* === AKSES / DEMO SECTION === */
+.akses {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
 }
 
-.feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px var(--shadow-medium);
-    border-color: var(--primary-light);
+.akses-box {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
 }
 
-.feature-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin-bottom: 16px;
+.akses-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
 }
 
-.feature-card h3 {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 10px;
+.akses-desc {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 36px;
+  line-height: 1.8;
 }
 
-.feature-card p {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.7;
+.akses-buttons {
+  margin-bottom: 20px;
 }
 
-/* ========================
-   SECTION AKSES / DEMO
-   Tombol akses menonjol
-   ======================== */
-.access-section { text-align: center; }
-
-.access-card {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: var(--radius-lg);
-    padding: 48px 40px;
-    color: var(--text-secondary);
-    max-width: 680px;
-    margin: 0 auto;
-    box-shadow: 0 12px 40px rgba(45, 106, 79, 0.25);
+.akses .btn-primary {
+  background: var(--primary-yellow);
+  color: var(--text-primary);
+  border-color: var(--primary-yellow);
+  font-size: 1.1rem;
 }
 
-.access-card h2 {
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 12px;
+.akses .btn-primary:hover {
+  background: #e0b300;
+  border-color: #e0b300;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
-.access-card p {
-    font-size: 15px;
-    opacity: 0.9;
-    line-height: 1.7;
-    margin-bottom: 28px;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
+.akses-note {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-/* ========================
-   SECTION TIM
-   Card dengan foto bulat
-   ======================== */
-.team-subtitle {
-    font-size: 15px;
-    color: var(--text-muted);
-    text-align: center;
-    margin-bottom: 40px;
+
+/* === TIM SECTION === */
+.tim-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
 }
 
-.team-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
+.card-tim {
+  text-align: center;
+  padding: 28px 16px;
 }
 
-.team-card {
-    background: var(--bg-main);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 28px 16px;
-    text-align: center;
-    transition: var(--transition);
+.tim-photo-wrapper {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  overflow: hidden;
+  border: 3px solid var(--primary-light);
+  box-shadow: var(--shadow);
 }
 
-.team-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px var(--shadow-medium);
-    border-color: var(--primary-light);
+.tim-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
 }
 
-.team-photo {
-    width: 90px;
-    height: 90px;
-    border-radius: var(--radius-full);
-    object-fit: cover;
-    margin: 0 auto 14px;
-    border: 3px solid var(--bg-card);
-    box-shadow: 0 2px 8px var(--shadow-soft);
+.card-tim:hover .tim-photo {
+  transform: scale(1.08);
 }
 
-.team-card h3 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    line-height: 1.3;
+.tim-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
 }
 
-.team-card .role {
-    font-size: 12px;
-    color: var(--primary);
-    font-weight: 600;
+.tim-role {
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 500;
 }
 
-/* Fallback foto jika gagal dimuat */
-.photo-fallback {
-    width: 90px;
-    height: 90px;
-    border-radius: var(--radius-full);
-    background: var(--bg-section);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 14px;
-    border: 3px solid var(--border-color);
-    color: var(--accent);
-    font-size: 30px;
-}
 
-/* ========================
-   FOOTER
-   ======================== */
+/* === FOOTER === */
 .footer {
-    background: var(--text-primary);
-    color: #cbd5e1;
-    padding: 40px 0 24px;
+  background: var(--secondary-dark);
+  color: var(--text-secondary);
+  padding: 40px 0;
 }
 
-.footer-content { text-align: center; }
-
-.footer-brand {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.footer-info {
-    font-size: 14px;
-    margin-bottom: 4px;
+.footer-logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .footer-tagline {
-    font-size: 13px;
-    color: var(--accent);
-    font-style: italic;
-    margin-top: 12px;
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
-.footer-divider {
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin: 20px 0 16px;
+.footer-info {
+  text-align: right;
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
-.footer-copy {
-    font-size: 12px;
-    color: var(--accent);
+.footer-info p {
+  margin-bottom: 4px;
 }
 
-/* ========================
-   FALLBACK GAMBAR
-   Tampilan jika gambar gagal dimuat
-   ======================== */
+
+/* === ANIMASI SCROLL === */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* === FALLBACK GAMBAR === */
 .img-fallback {
-    width: 100%;
-    min-height: 200px;
-    background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-light);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-size: 0.85rem;
+  padding: 40px 20px;
+  text-align: center;
+  min-height: 200px;
+}
+
+.img-fallback-foto {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  min-height: auto;
+  padding: 20px;
+  font-size: 2rem;
+}
+
+
+/* === RESPONSIVE === */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .hero-buttons {
     justify-content: center;
-    color: var(--accent);
-    font-size: 14px;
-    gap: 8px;
-    border-radius: var(--radius-md);
+  }
+
+  .hero-image {
+    order: -1;
+  }
+
+  .hero-img {
+    max-width: 400px;
+  }
+
+  .hero-title {
+    font-size: 2.4rem;
+  }
+
+  .card-grid-3 {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .card-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .solusi-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .solusi-image {
+    position: static;
+  }
+
+  .tim-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-/* ========================
-   RESPONSIVE — TABLET (max 900px)
-   ======================== */
-@media (max-width: 900px) {
-    /* Menu mobile */
-    .navbar-menu {
-        display: none;
-        position: fixed;
-        top: 64px;
-        left: 0;
-        right: 0;
-        background: var(--bg-main);
-        border-bottom: 1px solid var(--border-color);
-        flex-direction: column;
-        padding: 16px 24px;
-        gap: 4px;
-        box-shadow: 0 8px 24px var(--shadow-medium);
-    }
+/* Mobile */
+@media (max-width: 768px) {
+  .navbar-menu {
+    display: none;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    flex-direction: column;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+  }
 
-    .navbar-menu.show { display: flex; }
+  .navbar-menu.active {
+    display: flex;
+  }
 
-    .navbar-menu a {
-        padding: 12px 16px;
-        width: 100%;
-    }
+  .nav-link {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
 
-    .navbar-hamburger { display: flex; }
+  .hamburger {
+    display: flex;
+  }
 
-    /* Hero jadi 1 kolom */
-    .hero-inner {
-        flex-direction: column;
-        text-align: center;
-    }
+  .hero {
+    padding: 100px 0 60px;
+    min-height: auto;
+  }
 
-    .hero-title { font-size: 32px; }
-    .hero-tagline { font-size: 17px; }
-    .hero-image img { height: 260px; }
-    .btn-group { justify-content: center; }
+  .hero-title {
+    font-size: 2rem;
+  }
 
-    /* Card jadi 1 kolom */
-    .problem-cards { grid-template-columns: 1fr; }
-    .solusi-inner { flex-direction: column; }
-    .features-grid { grid-template-columns: 1fr; }
-    .team-grid { grid-template-columns: repeat(3, 1fr); }
-    .section-title { font-size: 26px; }
+  .hero-tagline {
+    font-size: 1.05rem;
+  }
+
+  .hero-img {
+    max-width: 300px;
+  }
+
+  .section {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .akses-title {
+    font-size: 1.8rem;
+  }
+
+  .btn-lg {
+    padding: 16px 28px;
+    font-size: 0.95rem;
+  }
+
+  .tim-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-info {
+    text-align: center;
+  }
 }
 
-/* ========================
-   RESPONSIVE — MOBILE (max 600px)
-   ======================== */
-@media (max-width: 600px) {
-    .container { padding: 0 16px; }
-    .section { padding: 56px 0; }
-    .hero { padding-top: 100px; padding-bottom: 56px; }
-    .hero-title { font-size: 26px; }
-    .hero-tagline { font-size: 15px; }
-    .hero-image img { height: 200px; }
-    .section-title { font-size: 22px; }
-    .section-desc { font-size: 14px; }
-    .btn { padding: 10px 22px; font-size: 14px; }
-    .access-card { padding: 32px 20px; }
-    .access-card h2 { font-size: 22px; }
-    .team-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .team-card { padding: 20px 12px; }
-    .team-photo { width: 70px; height: 70px; }
-    .photo-fallback { width: 70px; height: 70px; font-size: 22px; }
+/* Mobile kecil */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .hero-title {
+    font-size: 1.7rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tim-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .card {
+    padding: 24px;
+  }
 }

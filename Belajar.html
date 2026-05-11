@@ -1,836 +1,940 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Belajar Haji & Umroh — Zavira Haramain</title>
-    <!-- Gunakan CSS utama agar warna konsisten -->
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* ============================================
-           CSS KHUSUS HALAMAN BELAJAR (LMS Mini)
-           Variabel warna diambil dari :root style.css
-           Ditulis di sini agar halaman ini mandiri
-           ============================================ */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belajar Haji & Umroh - Zavira Haramain</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- 
+    Style tambahan khusus halaman belajar (LMS mini).
+    Ditempatkan di sini agar tidak mencampur dengan style landing page.
+  -->
+  <style>
+    /* === LAYOUT LMS === */
+    .lms-wrapper {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 68px; /* Offset untuk navbar */
+    }
 
-        body { background: var(--bg-section); }
+    /* Sidebar */
+    .lms-sidebar {
+      width: 300px;
+      flex-shrink: 0;
+      background: var(--bg-section-alt);
+      border-right: 1px solid rgba(0, 0, 0, 0.06);
+      position: fixed;
+      top: 68px;
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 24px 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
 
-        /* ---------- HEADER LMS ---------- */
-        .lms-header {
-            position: fixed; top: 0; left: 0; right: 0;
-            height: 56px; background: var(--primary); color: #fff;
-            display: flex; align-items: center; padding: 0 16px;
-            z-index: 900; box-shadow: 0 2px 14px rgba(0,0,0,.15);
-        }
-        .lms-back {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-            color: #fff; padding: 5px 14px; border-radius: 6px;
-            font-size: 13px; font-weight: 500; margin-right: 12px;
-            transition: background .2s; text-decoration: none;
-        }
-        .lms-back:hover { background: rgba(255,255,255,.22); }
-        .lms-brand { font-size: 15px; font-weight: 700; }
-        .lms-brand small { font-weight: 400; opacity: .75; font-size: 11px; display: block; }
-        .lms-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-        .lms-pct {
-            background: rgba(255,255,255,.18); padding: 3px 12px;
-            border-radius: 20px; font-size: 11px; font-weight: 600;
-        }
-        .lms-burger {
-            display: none; width: 36px; height: 36px; border-radius: 6px;
-            background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-            color: #fff; font-size: 20px; align-items: center; justify-content: center;
-            cursor: pointer;
-        }
+    .lms-sidebar-header {
+      padding: 0 20px 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      margin-bottom: 8px;
+    }
 
-        /* ---------- LAYOUT ---------- */
-        .lms-layout { display: flex; margin-top: 56px; min-height: calc(100vh - 56px); }
+    .lms-sidebar-header h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
 
-        /* ---------- SIDEBAR ---------- */
-        .lms-sidebar {
-            width: 292px; min-width: 292px; background: var(--bg-main);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto; height: calc(100vh - 56px);
-            position: sticky; top: 56px; transition: transform .3s ease;
-        }
-        .lms-sidebar::-webkit-scrollbar { width: 3px; }
-        .lms-sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .lms-sidebar-header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
 
-        /* Progress di sidebar */
-        .sb-prog { padding: 14px 16px; border-bottom: 1px solid var(--border-color); }
-        .sb-prog-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; }
-        .sb-prog-bar { height: 4px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
-        .sb-prog-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 4px; transition: width .5s ease; }
+    /* Bab (collapsible) */
+    .lms-bab {
+      margin-bottom: 4px;
+    }
 
-        /* Chapter */
-        .ch { border-bottom: 1px solid var(--border-color); }
-        .ch:last-child { border-bottom: none; }
-        .ch-head {
-            display: flex; align-items: center; gap: 10px;
-            padding: 11px 16px; cursor: pointer; user-select: none; transition: background .15s;
-        }
-        .ch-head:hover { background: var(--bg-section); }
-        .ch-ico {
-            width: 28px; height: 28px; border-radius: 6px;
-            background: var(--bg-card); color: var(--primary);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 800; flex-shrink: 0;
-        }
-        .ch-head.open .ch-ico { background: var(--primary); color: #fff; }
-        .ch-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.35; }
-        .ch-arr { font-size: 10px; color: var(--text-muted); transition: transform .2s; }
-        .ch-head.open .ch-arr { transform: rotate(90deg); }
+    .lms-bab-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+    }
 
-        /* Subbab */
-        .ch-subs { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
-        .ch-head.open + .ch-subs { max-height: 600px; }
-        .sub {
-            display: flex; align-items: center; gap: 8px;
-            padding: 8px 16px 8px 54px; font-size: 13px;
-            color: var(--text-muted); cursor: pointer; transition: all .15s; position: relative;
-        }
-        .sub::before {
-            content: ''; width: 5px; height: 5px; border-radius: 50%;
-            background: #cbd5e1; flex-shrink: 0; transition: all .2s;
-        }
-        .sub:hover { background: var(--bg-section); color: var(--text-primary); }
-        .sub:hover::before { background: var(--accent); }
-        .sub.on { background: var(--bg-card); color: var(--primary); font-weight: 600; }
-        .sub.on::before { background: var(--primary); width: 7px; height: 7px; box-shadow: 0 0 0 3px rgba(45,106,79,.12); }
-        .sub.ok::after {
-            content: '\2713'; position: absolute; right: 14px;
-            width: 16px; height: 16px; border-radius: 50%;
-            background: var(--primary); color: #fff; font-size: 9px;
-            font-weight: 700; display: flex; align-items: center; justify-content: center;
-        }
+    .lms-bab-title:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
 
-        /* Overlay sidebar mobile */
-        .sb-overlay { display: none; position: fixed; inset: 0; top: 56px; background: rgba(0,0,0,.35); z-index: 799; }
-        .sb-overlay.on { display: block; }
+    .lms-bab-title.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
 
-        /* ---------- KONTEN ---------- */
-        .lms-content {
-            flex: 1; min-width: 0; max-width: 840px;
-            margin: 0 auto; padding: 36px 44px 80px; width: 100%;
-        }
-        .pg { display: none; }
-        .pg.on { display: block; animation: pgFade .3s ease; }
-        @keyframes pgFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .lms-bab-arrow {
+      font-size: 0.75rem;
+      transition: transform 0.3s ease;
+    }
 
-        .bc { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-        .bc b { color: var(--primary); font-weight: 600; }
-        .pg-h1 { font-size: 28px; font-weight: 800; line-height: 1.25; margin-bottom: 6px; color: var(--text-primary); }
-        .pg-sub { font-size: 15px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+    .lms-bab-title.active .lms-bab-arrow {
+      transform: rotate(90deg);
+    }
 
-        /* Elemen materi */
-        .m-p { font-size: 15px; color: var(--text-primary); line-height: 1.88; margin-bottom: 16px; text-align: justify; }
-        .m-h3 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--bg-card); }
-        .m-h4 { font-size: 16px; font-weight: 600; margin: 20px 0 8px; color: var(--text-primary); }
-        .m-ol { padding-left: 24px; margin-bottom: 16px; list-style: decimal; }
-        .m-ol li { font-size: 15px; color: var(--text-primary); line-height: 1.85; margin-bottom: 5px; }
-        .m-ol li strong { color: var(--text-primary); }
-        .m-ul { padding-left: 24px; margin-bottom: 16px; list-style: disc; }
-        .m-ul li { font-size: 15px; color: var(--text-primary); line-height: 1.85; margin-bottom: 5px; }
+    /* Daftar Subbab */
+    .lms-sub-list {
+      display: none;
+      padding: 4px 0;
+    }
 
-        /* Box variants */
-        .m-box { border-radius: var(--radius-md); padding: 14px 18px; margin: 18px 0; font-size: 14px; line-height: 1.75; }
-        .m-box-g { background: var(--bg-card); border-left: 4px solid var(--primary); color: var(--text-primary); }
-        .m-box-g strong { color: var(--primary); }
-        .m-box-y { background: #fef3c7; border-left: 4px solid #f59e0b; color: #78350f; }
-        .m-box-r { background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; }
-        .m-box-ok { background: #f0fdf4; border-left: 4px solid var(--primary-light); color: #166534; }
-        .m-box-b { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af; }
-        .m-box-b strong { color: #1e3a8a; }
+    .lms-sub-list.open {
+      display: block;
+    }
 
-        /* Tabel */
-        .m-tbl-w { margin: 20px 0; overflow-x: auto; border-radius: var(--radius-md); box-shadow: 0 1px 6px var(--shadow-soft); }
-        .m-tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .m-tbl thead { background: var(--primary); color: #fff; }
-        .m-tbl th { padding: 10px 14px; text-align: left; font-weight: 600; }
-        .m-tbl td { padding: 9px 14px; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
-        .m-tbl tbody tr:nth-child(even) { background: var(--bg-section); }
-        .m-tbl tbody tr:hover { background: var(--bg-card); }
+    .lms-sub-link {
+      display: block;
+      padding: 10px 20px 10px 40px;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      transition: var(--transition);
+      border-left: 3px solid transparent;
+    }
 
-        /* Gambar */
-        .m-img { margin: 22px 0; border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 2px 10px var(--shadow-soft); border: 1px solid var(--border-color); background: var(--bg-section); }
-        .m-img img { width: 100%; height: auto; }
-        .m-img-cap { padding: 8px 14px; font-size: 12px; color: var(--text-muted); text-align: center; font-style: italic; }
+    .lms-sub-link:hover {
+      color: var(--primary);
+      background: rgba(27, 122, 61, 0.05);
+      border-left-color: var(--primary-light);
+    }
 
-        /* Embed */
-        .m-embed { position: relative; width: 100%; padding-top: 56.25%; margin: 22px 0; border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 2px 14px var(--shadow-soft); }
-        .m-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-        .m-embed-cap { text-align: center; font-size: 12px; color: var(--text-muted); font-style: italic; margin-top: 6px; }
-        .m-ext { display: inline-block; color: var(--primary); font-weight: 600; font-size: 13px; margin-top: 6px; }
-        .m-ext:hover { text-decoration: underline; }
+    .lms-sub-link.active-sub {
+      color: var(--primary);
+      font-weight: 600;
+      background: var(--primary-light);
+      border-left-color: var(--primary);
+    }
 
-        /* Link card */
-        .m-lc { display: flex; align-items: center; gap: 16px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px 22px; margin: 22px 0; transition: all .2s; box-shadow: 0 1px 4px var(--shadow-soft); }
-        .m-lc:hover { border-color: var(--primary); box-shadow: 0 4px 14px rgba(45,106,79,.08); transform: translateY(-2px); }
-        .m-lc-ico { width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-        .m-lc-txt h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-        .m-lc-txt p { font-size: 12px; color: var(--text-muted); }
-        .m-lc-arr { margin-left: auto; color: var(--text-muted); font-size: 16px; }
+    /* Tombol toggle sidebar (mobile) */
+    .lms-toggle {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(27, 122, 61, 0.4);
+      transition: var(--transition);
+    }
 
-        /* Doa */
-        .m-doa { direction: rtl; text-align: right; font-size: 20px; line-height: 2.5; background: var(--bg-card); border-radius: var(--radius-md); padding: 20px 24px; margin: 16px 0; }
-        .m-doa-latin { text-align: center; font-style: italic; color: var(--text-muted); font-size: 14px; margin: 4px 0 18px; }
+    .lms-toggle:hover {
+      transform: scale(1.05);
+      background: var(--primary-dark);
+    }
 
-        .m-hr { border: none; border-top: 1px dashed var(--border-color); margin: 24px 0; }
+    /* Overlay saat sidebar terbuka di mobile */
+    .lms-overlay {
+      display: none;
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 90;
+    }
 
-        /* Step number */
-        .m-step { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-right: 10px; margin-top: 2px; }
-        .m-step-r { display: flex; gap: 0; margin-bottom: 14px; }
-        .m-step-r .m-p { flex: 1; }
+    .lms-overlay.show {
+      display: block;
+    }
 
-        /* Navigasi bawah */
-        .m-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); gap: 12px; }
-        .m-nav a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; }
-        .mn-prev { background: var(--bg-section); color: var(--text-muted); border: 1px solid var(--border-color); }
-        .mn-prev:hover { background: var(--border-color); }
-        .mn-next { background: var(--primary); color: #fff; }
-        .mn-next:hover { background: var(--primary-dark); }
-        .mn-ok { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
-        .mn-ok:hover { background: var(--primary); color: #fff; }
-        .mn-ok.did { background: var(--primary); color: #fff; }
+    /* Area Konten Utama */
+    .lms-content {
+      flex: 1;
+      margin-left: 300px;
+      padding: 40px 40px 80px;
+      max-width: 100%;
+    }
 
-        /* Welcome */
-        .wc { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; border-radius: var(--radius-lg); padding: 44px 36px; margin-bottom: 28px; text-align: center; position: relative; overflow: hidden; }
-        .wc::before { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.06); }
-        .wc::after { content: ''; position: absolute; bottom: -60px; left: -30px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,.04); }
-        .wc h2 { font-size: 28px; font-weight: 800; margin-bottom: 10px; position: relative; }
-        .wc p { font-size: 15px; opacity: .88; line-height: 1.75; max-width: 560px; margin: 0 auto; position: relative; }
-        .wc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
-        .wc-stat { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; text-align: center; }
-        .wc-stat b { display: block; font-size: 30px; font-weight: 800; color: var(--primary); }
-        .wc-stat span { font-size: 13px; color: var(--text-muted); }
+    .lms-content-header {
+      margin-bottom: 40px;
+    }
 
-        /* ---------- RESPONSIVE LMS ---------- */
-        @media (max-width: 900px) {
-            .lms-burger { display: flex; }
-            .lms-pct { display: none; }
-            .lms-sidebar { position: fixed; top: 56px; left: 0; bottom: 0; transform: translateX(-100%); box-shadow: 0 4px 20px var(--shadow-medium); z-index: 800; }
-            .lms-sidebar.on { transform: translateX(0); }
-            .lms-content { padding: 24px 20px 60px; }
-            .pg-h1 { font-size: 22px; }
-            .wc-stats { grid-template-columns: 1fr; }
-            .m-nav { flex-direction: column; }
-            .m-nav a { width: 100%; justify-content: center; }
-        }
-        @media (max-width: 600px) {
-            .lms-brand small { display: none; }
-            .lms-content { padding: 18px 14px 60px; }
-            .wc { padding: 32px 18px; }
-            .wc h2 { font-size: 22px; }
-            .m-tbl { font-size: 11px; }
-            .m-tbl th, .m-tbl td { padding: 7px 8px; }
-        }
-    </style>
+    .lms-content-header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+    }
+
+    .lms-content-header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* Setiap section materi */
+    .materi-section {
+      margin-bottom: 60px;
+      scroll-margin-top: 84px;
+    }
+
+    .materi-section h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .materi-section h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--secondary);
+      margin: 28px 0 12px;
+    }
+
+    .materi-section h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 20px 0 8px;
+    }
+
+    .materi-section p {
+      font-size: 0.93rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+      margin-bottom: 12px;
+    }
+
+    .materi-section ol,
+    .materi-section ul {
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+
+    .materi-section li {
+      font-size: 0.93rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 6px;
+      list-style: disc;
+    }
+
+    .materi-section ol li {
+      list-style: decimal;
+    }
+
+    /* Gambar di dalam materi */
+    .materi-img {
+      width: 100%;
+      max-width: 700px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin: 20px 0;
+      object-fit: cover;
+    }
+
+    /* Embed container (video/iframe) */
+    .embed-container {
+      position: relative;
+      width: 100%;
+      max-width: 750px;
+      padding-top: 56.25%;
+      margin: 20px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .embed-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Link eksternal (game, dll) */
+    .materi-external-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--secondary-light);
+      color: var(--secondary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+      margin: 16px 0;
+    }
+
+    .materi-external-link:hover {
+      background: var(--secondary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Info box / highlight */
+    .materi-info-box {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+
+    .materi-info-box p {
+      color: var(--primary-dark);
+      font-size: 0.9rem;
+      margin-bottom: 0;
+    }
+
+    /* Divider antar subbab */
+    .materi-divider {
+      border: none;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.08);
+      margin: 40px 0;
+    }
+
+    /* Tabel perbedaan */
+    .materi-table {
+      width: 100%;
+      max-width: 700px;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .materi-table th {
+      background: var(--primary);
+      color: white;
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .materi-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      color: var(--text-muted);
+    }
+
+    .materi-table tr:nth-child(even) td {
+      background: var(--bg-section-alt);
+    }
+
+    /* === RESPONSIVE LMS === */
+    @media (max-width: 1024px) {
+      .lms-sidebar {
+        width: 280px;
+      }
+
+      .lms-content {
+        margin-left: 280px;
+        padding: 32px 28px 80px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .lms-sidebar {
+        transform: translateX(-100%);
+      }
+
+      .lms-sidebar.open-mobile {
+        transform: translateX(0);
+      }
+
+      .lms-content {
+        margin-left: 0;
+        padding: 24px 16px 100px;
+      }
+
+      .lms-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .lms-content-header h1 {
+        font-size: 1.4rem;
+      }
+
+      .materi-section h2 {
+        font-size: 1.2rem;
+      }
+
+      .materi-table {
+        font-size: 0.8rem;
+      }
+
+      .materi-table th,
+      .materi-table td {
+        padding: 8px 10px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- ============================
-         HEADER LMS
-         ============================ -->
-    <header class="lms-header">
-        <a href="index.html" class="lms-back">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Kembali
-        </a>
-        <div class="lms-brand">Zavira Haramain<small>Belajar Haji & Umroh</small></div>
-        <div class="lms-right">
-            <span class="lms-pct" id="hPct">0%</span>
-            <button class="lms-burger" id="hBurger" aria-label="Menu">&#9776;</button>
-        </div>
-    </header>
-    <div class="sb-overlay" id="sbOv"></div>
-
-    <!-- ============================
-         LAYOUT: SIDEBAR + KONTEN
-         ============================ -->
-    <div class="lms-layout">
-
-        <!-- ===== SIDEBAR ===== -->
-        <aside class="lms-sidebar" id="lmsSB">
-            <div class="sb-prog">
-                <div class="sb-prog-top"><span>Progres Belajar</span><span id="sPct">0%</span></div>
-                <div class="sb-prog-bar"><div class="sb-prog-fill" id="sFill"></div></div>
-            </div>
-
-            <!-- Bab 1 -->
-            <div class="ch">
-                <div class="ch-head open" onclick="togCh(this)">
-                    <div class="ch-ico">1</div>
-                    <div class="ch-name">Konsep Dasar Haji & Umroh</div>
-                    <div class="ch-arr">&#9654;</div>
-                </div>
-                <div class="ch-subs" style="max-height:600px">
-                    <div class="sub on" data-t="a" onclick="go('a',this)">Pengertian Haji & Umroh</div>
-                    <div class="sub" data-t="b" onclick="go('b',this)">Hukum Haji & Umroh</div>
-                    <div class="sub" data-t="c" onclick="go('c',this)">Perbedaan Haji dan Umroh</div>
-                    <div class="sub" data-t="d" onclick="go('d',this)">Syarat Wajib Haji</div>
-                    <div class="sub" data-t="e" onclick="go('e',this)">Dalil dan Niat Haji & Umroh</div>
-                    <div class="sub" data-t="f" onclick="go('f',this)">Hal yang Membatalkan Haji & Umroh</div>
-                    <div class="sub" data-t="ra" onclick="go('ra',this)">&#128203; Ringkasan Bab 1</div>
-                </div>
-            </div>
-
-            <!-- Bab 2 -->
-            <div class="ch">
-                <div class="ch-head" onclick="togCh(this)">
-                    <div class="ch-ico">2</div>
-                    <div class="ch-name">Alur Rangkaian Ibadah</div>
-                    <div class="ch-arr">&#9654;</div>
-                </div>
-                <div class="ch-subs">
-                    <div class="sub" data-t="g" onclick="go('g',this)">Alur Rangkaian Ibadah Haji</div>
-                    <div class="sub" data-t="h" onclick="go('h',this)">Alur Rangkaian Ibadah Umroh</div>
-                    <div class="sub" data-t="rb" onclick="go('rb',this)">&#128203; Ringkasan Bab 2</div>
-                </div>
-            </div>
-
-            <!-- Bab 3 -->
-            <div class="ch">
-                <div class="ch-head" onclick="togCh(this)">
-                    <div class="ch-ico">3</div>
-                    <div class="ch-name">Ziarah & Kota Suci</div>
-                    <div class="ch-arr">&#9654;</div>
-                </div>
-                <div class="ch-subs">
-                    <div class="sub" data-t="i" onclick="go('i',this)">Keutamaan Makkah & Madinah</div>
-                    <div class="sub" data-t="j" onclick="go('j',this)">Adab di Masjid Nabawi</div>
-                    <div class="sub" data-t="k" onclick="go('k',this)">Situs Sejarah</div>
-                    <div class="sub" data-t="rc" onclick="go('rc',this)">&#128203; Ringkasan Bab 3</div>
-                </div>
-            </div>
-
-            <!-- Bab 4 -->
-            <div class="ch">
-                <div class="ch-head" onclick="togCh(this)">
-                    <div class="ch-ico">4</div>
-                    <div class="ch-name">Kumpulan Doa</div>
-                    <div class="ch-arr">&#9654;</div>
-                </div>
-                <div class="ch-subs">
-                    <div class="sub" data-t="l" onclick="go('l',this)">Kumpulan Doa Manasik</div>
-                </div>
-            </div>
-
-            <!-- Bab 5 -->
-            <div class="ch">
-                <div class="ch-head" onclick="togCh(this)">
-                    <div class="ch-ico">5</div>
-                    <div class="ch-name">Latihan & Kuis</div>
-                    <div class="ch-arr">&#9654;</div>
-                </div>
-                <div class="ch-subs">
-                    <div class="sub" data-t="m" onclick="go('m',this)">Kuis Pemahaman</div>
-                </div>
-            </div>
-
-            <!-- Bab 6 -->
-            <div class="ch">
-                <div class="ch-head" onclick="togCh(this)">
-                    <div class="ch-ico">6</div>
-                    <div class="ch-name">Game Interaktif</div>
-                    <div class="ch-arr">&#9654;</div>
-                </div>
-                <div class="ch-subs">
-                    <div class="sub" data-t="n" onclick="go('n',this)">Game Manasik Haji & Umroh</div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- ===== KONTEN ===== -->
-        <main class="lms-content">
-
-            <!-- ========== WELCOME ========== -->
-            <div class="pg on" id="p-welcome">
-                <div class="wc">
-                    <h2>Assalamu'alaikum! &#128075;</h2>
-                    <p>Belajar haji dan umroh kini jadi lebih mudah, seru, dan interaktif! Aplikasi ini hadir sebagai solusi pembelajaran digital yang membantu siswa memahami setiap tahapan ibadah haji dan umroh dengan cara yang sederhana dan menyenangkan.</p>
-                </div>
-                <div class="wc-stats">
-                    <div class="wc-stat"><b>6</b><span>Bab Pembelajaran</span></div>
-                    <div class="wc-stat"><b>16</b><span>Materi & Subbab</span></div>
-                    <div class="wc-stat"><b id="wDone">0</b><span>Selesai Dipelajari</span></div>
-                </div>
-                <div class="m-box m-box-g"><strong>&#128241; Cara Menggunakan:</strong> Pilih bab di sidebar kiri, lalu klik subbab. Setelah membaca, klik <strong>"Tandai Selesai"</strong> di bawah. Progres tersimpan otomatis.</div>
-                <p class="m-p" style="text-align:center;margin-top:32px;">
-                    <a href="javascript:void(0)" onclick="go('a',document.querySelector('[data-t=a]'))" class="m-ext" style="font-size:16px;">Mulai Belajar dari Bab 1 &#8594;</a>
-                </p>
-            </div>
-
-            <!-- ========== A: Pengertian ========== -->
-            <div class="pg" id="p-a">
-                <div class="bc">Bab 1 &gt; <b>Pengertian Haji & Umroh</b></div>
-                <h2 class="pg-h1">Pengertian Haji & Umroh</h2>
-                <p class="pg-sub">Memahami makna dan definisi dasar ibadah haji dan umroh dalam Islam.</p>
-                <h3 class="m-h3">Pengertian Haji</h3>
-                <p class="m-p">Secara harfiah, Haji dapat diartikan sebagai <strong>tujuan, maksud, dan menyengaja</strong>, yaitu bermaksud mendatangi tempat yang diagungkan, mendatangi secara fisik dan jiwa ke <strong>Baitullah</strong> untuk menunaikan amalan-amalan tertentu atau mengunjungi tempat-tempat tertentu pada waktu tertentu untuk melakukan amalan-amalan tertentu.</p>
-                <h3 class="m-h3">Pengertian Umroh</h3>
-                <p class="m-p">Secara harfiah, Umrah berarti <strong>ziarah atau berziarah</strong> ke tempat yang mulia yaitu "Baitullah" untuk melaksanakan amalan-amalan tertentu yang terdiri atas <strong>tawaf, sa'i, dan bercukur</strong>.</p>
-                <div class="m-box m-box-g"><strong>&#128161; Catatan Penting:</strong> Yang dimaksud dengan tempat-tempat tertentu di atas adalah Ka'bah dan Arafah, sedangkan waktu-waktu tertentu adalah <strong>Asyhur al-Haj</strong> (bulan-bulan haji) yang terdiri atas Syawal, Zulkaidah, dan 10 hari pertama Zulhijah.</div>
-                <div class="m-nav">
-                    <a class="mn-prev" style="visibility:hidden;">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-a" onclick="done('a')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('b',document.querySelector('[data-t=b]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== B: Hukum ========== -->
-            <div class="pg" id="p-b">
-                <div class="bc">Bab 1 &gt; <b>Hukum Haji & Umroh</b></div>
-                <h2 class="pg-h1">Hukum Haji & Umroh</h2>
-                <p class="pg-sub">Kedudukan haji sebagai rukun Islam dan makna mendalamnya.</p>
-                <p class="m-p">Haji merupakan <strong>rukun Islam yang kelima</strong> yang diwajibkan bagi seorang Muslim yang memiliki kemampuan untuk melaksanakannya <strong>sekali sepanjang hidupnya</strong>. Pelaksanaan haji merupakan ibadah mahdah yang bersifat <em>ta'abbudi</em> yang pelaksanaannya mengandung banyak rahasia dan simbol-simbol.</p>
-                <h3 class="m-h3">Makna & Hikmah Ibadah Haji</h3>
-                <ol class="m-ol">
-                    <li><strong>Simbol Penghambaan:</strong> Memakai ihram sebagai simbol melepaskan diri dari hawa nafsu, menghadapkan diri kepada Allah, memperteguh keimanan dan ketaqwaan.</li>
-                    <li><strong>Pembentukan Akhlak Mulia:</strong> Tindak lanjut pembentukan sikap mental dan akhlak mulia.</li>
-                    <li><strong>Simbol Persatuan Umat:</strong> Pernyataan umat Islam seluruh dunia menjadi satu karena persamaan akidah.</li>
-                    <li><strong>Memperkuat Fisik & Mental:</strong> Memerlukan persiapan fisik kuat, biaya besar, kesabaran dan ketabahan.</li>
-                    <li><strong>Semangat Berkorban:</strong> Menumbuhkan semangat berkorban harta, jiwa, tenaga, dan waktu.</li>
-                    <li><strong>Membangun Persatuan:</strong> Memanfaatkan untuk membangun persatuan dan kesatuan umat Islam sedunia.</li>
-                    <li><strong>Muktamar Akbar:</strong> Peserta dari seluruh penjuru dunia, Ka'bah menjadi simbol kesatuan.</li>
-                </ol>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('a',document.querySelector('[data-t=a]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-b" onclick="done('b')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('c',document.querySelector('[data-t=c]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== C: Perbedaan ========== -->
-            <div class="pg" id="p-c">
-                <div class="bc">Bab 1 &gt; <b>Perbedaan Haji dan Umroh</b></div>
-                <h2 class="pg-h1">Perbedaan Haji dan Umroh</h2>
-                <p class="pg-sub">Memahami perbedaan mendasar antara ibadah haji dan umroh.</p>
-                <div class="m-tbl-w">
-                    <table class="m-tbl">
-                        <thead><tr><th>Aspek</th><th>Haji</th><th>Umroh</th></tr></thead>
-                        <tbody>
-                            <tr><td><strong>Waktu</strong></td><td>Terikat (Syawal–Zulhijjah)</td><td>Bebas kapan saja</td></tr>
-                            <tr><td><strong>Wukuf</strong></td><td>Wajib (rukun utama)</td><td>Tidak ada</td></tr>
-                            <tr><td><strong>Mabit & Lontar</strong></td><td>Ada (Mina & Muzdalifah)</td><td>Tidak ada</td></tr>
-                            <tr><td><strong>Durasi</strong></td><td>Minimal 4–6 hari</td><td>Beberapa jam</td></tr>
-                            <tr><td><strong>Hukum</strong></td><td>Wajib (yang mampu)</td><td>Sunnah muakkadah</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="m-img">
-                    <img src="https://i.ibb.co.com/Xf0K8t76/Chat-GPT-Image-May-2-2026-03-10-06-PM.png" alt="Infografis Perbedaan Haji dan Umroh">
-                    <div class="m-img-cap">Gambar: Perbedaan Haji dan Umroh</div>
-                </div>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('b',document.querySelector('[data-t=b]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-c" onclick="done('c')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('d',document.querySelector('[data-t=d]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== D: Syarat Wajib ========== -->
-            <div class="pg" id="p-d">
-                <div class="bc">Bab 1 &gt; <b>Syarat Wajib Haji</b></div>
-                <h2 class="pg-h1">Syarat Wajib Haji</h2>
-                <p class="pg-sub">Lima ketentuan yang harus dipenuhi agar diwajibkan menunaikan ibadah haji.</p>
-                <p class="m-p">Syarat wajib haji adalah ketentuan yang harus dipenuhi agar seseorang terkena kewajiban haji. Apabila salah satu tidak terpenuhi, kewajiban belum berlaku.</p>
-                <div class="m-step-r"><span class="m-step">1</span><div class="m-p"><strong>Islam</strong> — Ibadah haji bagian dari rukun Islam, hanya diwajibkan kepada Muslim. Tanpa iman, amal tidak memiliki nilai. Syarat ini mutlak.</div></div>
-                <div class="m-step-r"><span class="m-step">2</span><div class="m-p"><strong>Baligh</strong> — Tanda: haid (perempuan), mimpi basah (laki-laki), atau usia ~15 tahun. Anak yang haji tetap sah sebagai sunnah, tapi <strong>tidak menggugurkan kewajiban</strong> saat dewasa.</div></div>
-                <div class="m-step-r"><span class="m-step">3</span><div class="m-p"><strong>Berakal (Aqil)</strong> — Mampu berpikir dan memahami perintah/larangan. Gangguan jiwa berat = tidak dibebani kewajiban.</div></div>
-                <div class="m-step-r"><span class="m-step">4</span><div class="m-p"><strong>Merdeka</strong> — Memiliki kebebasan dan kendali atas diri sendiri. Di era modern, syarat ini praktis tidak lagi hambatan.</div></div>
-                <div class="m-step-r"><span class="m-step">5</span><div class="m-p"><strong>Mampu (Istitha'ah)</strong> — Mencakup:</div></div>
-                <div class="m-box m-box-b" style="margin:0 0 8px 36px;">
-                    <strong>a. Fisik:</strong> Sehat untuk thawaf, sa'i, wukuf, perjalanan antar tempat.<br>
-                    <strong>b. Finansial:</strong> Biaya tanpa mengorbankan kebutuhan pokok keluarga.<br>
-                    <strong>c. Keamanan:</strong> Perjalanan aman dari segi transportasi, wilayah, politik.<br>
-                    <strong>d. Perempuan:</strong> Harus didampingi <strong>mahram</strong> atau rombongan aman terpercaya.
-                </div>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('c',document.querySelector('[data-t=c]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-d" onclick="done('d')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('e',document.querySelector('[data-t=e]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== E: Dalil & Niat ========== -->
-            <div class="pg" id="p-e">
-                <div class="bc">Bab 1 &gt; <b>Dalil dan Niat Haji & Umroh</b></div>
-                <h2 class="pg-h1">Dalil dan Niat Haji & Umroh</h2>
-                <p class="pg-sub">Dalil Al-Qur'an dan Hadits serta bacaan niat ibadah.</p>
-                <div class="m-box m-box-ok"><strong>QS. Ali Imran ayat 97:</strong><br><br>"Dan manusia terhadap Allah adalah kewajiban untuk menunaikan haji, yaitu (bagi) orang yang sanggup mengadakan perjalanan ke Baitullah. Barangsiapa mengingkari (kewajiban haji), maka sesungguhnya Allah Maha Kaya dari semesta alam."</div>
-                <div class="m-box m-box-g"><strong>Hadits Ibnu Umar RA:</strong><br><br>"Islam dibangun di atas lima perkara: bersaksi bahwa tidak ada Tuhan selain Allah dan Muhammad utusan-Nya, mendirikan shalat, menunaikan zakat, haji, dan puasa Ramadhan." (HR. Bukhari & Muslim)</div>
-                <h3 class="m-h3">Video Pembahasan</h3>
-                <div class="m-embed"><iframe src="https://www.canva.com/design/DAHIqXgKJt4/ts3JvFdb-NQ1UfgRgLYqsw/watch?embed" allowfullscreen allow="fullscreen" loading="lazy"></iframe></div>
-                <p class="m-embed-cap">Video: Dalil dan Niat Haji & Umroh</p>
-                <p class="m-p" style="text-align:center;"><a href="https://www.canva.com/design/DAHIqXgKJt4/ts3JvFdb-NQ1UfgRgLYqsw/watch" target="_blank" rel="noopener" class="m-ext">&#128279; Buka di tab baru jika tidak terload</a></p>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('d',document.querySelector('[data-t=d]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-e" onclick="done('e')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('f',document.querySelector('[data-t=f]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== F: Pembatal ========== -->
-            <div class="pg" id="p-f">
-                <div class="bc">Bab 1 &gt; <b>Hal yang Membatalkan Haji & Umroh</b></div>
-                <h2 class="pg-h1">Hal-Hal yang Membatalkan Haji & Umroh</h2>
-                <p class="pg-sub">Pelanggaran berat yang menyebabkan ibadah tidak sah, beserta dam dan kafarat.</p>
-                <div class="m-box m-box-r"><strong>&#9888;&#65039; Jimak sebelum Tahallul Awal (Haji):</strong> Haji <strong>BATAL</strong>. Tetap wajib lanjutkan, qadha tahun depan, dam = unta &rarr; sapi &rarr; kambing &rarr; sedekah &rarr; puasa.</div>
-                <div class="m-box m-box-y"><strong>Jimak setelah Tahallul Awal:</strong> Haji sah, dam seekor kambing. Dalam umroh: batal, qadha + dam kambing.</div>
-                <div class="m-step-r"><span class="m-step" style="background:#dc2626;">!</span><div class="m-p"><strong>Tidak Wukuf di Arafah</strong> — "Haji itu adalah Arafah." Tidak sah, harus diulang, <strong>tidak ada dam pengganti</strong>.</div></div>
-                <div class="m-step-r"><span class="m-step" style="background:#dc2626;">!</span><div class="m-p"><strong>Tidak Tawaf Ifadhah</strong> — Tidak sah, tidak bisa diganti dam.</div></div>
-                <div class="m-step-r"><span class="m-step" style="background:#dc2626;">!</span><div class="m-p"><strong>Tidak Sa'i</strong> — Rukun, jika ditinggalkan = batal.</div></div>
-                <div class="m-step-r"><span class="m-step" style="background:#dc2626;">!</span><div class="m-p"><strong>Tidak Tahallul</strong> — Rukun, tidak sah tanpa cukur/potong rambut.</div></div>
-                <div class="m-step-r"><span class="m-step" style="background:#dc2626;">!</span><div class="m-p"><strong>Tidak Tertib</strong> — Urutan rukun harus benar, jika tidak = tidak sah.</div></div>
-                <hr class="m-hr">
-                <h3 class="m-h3">Tabel Dam & Kafarat</h3>
-                <div class="m-tbl-w">
-                    <table class="m-tbl">
-                        <thead><tr><th>Pelanggaran</th><th>Konsekuensi</th><th>Dam</th></tr></thead>
-                        <tbody>
-                            <tr><td>Jimak sebelum tahallul (Haji)</td><td>Batal, qadha</td><td>Unta &rarr; Sapi &rarr; Kambing &rarr; Sedekah &rarr; Puasa</td></tr>
-                            <tr><td>Jimak setelah tahallul (Haji)</td><td>Sah</td><td>Seekor kambing</td></tr>
-                            <tr><td>Jimak sebelum tahallul (Umroh)</td><td>Batal, qadha</td><td>Seekor kambing</td></tr>
-                            <tr><td>Tidak mabit di Mina/Muzdalifah</td><td>Sah</td><td>Kambing atau puasa 10 hari</td></tr>
-                            <tr><td>Melanggar larangan ihram</td><td>Sah</td><td>Kambing / Puasa 3 hari / Sedekah</td></tr>
-                            <tr><td>Membunuh binatang buruan</td><td>Sah</td><td>Hewan sepadan / Makan fakir / Puasa</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="m-box m-box-g"><strong>&#128161; Catatan Ulama:</strong> Mazhab Syafi'i tetap mewajibkan dam meskipun tanpa sengaja. Sebagian ulama lain memberikan keringanan bagi yang lupa/tidak tahu.</div>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('e',document.querySelector('[data-t=e]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-f" onclick="done('f')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('ra',document.querySelector('[data-t=ra]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== RA: Ringkasan Bab 1 ========== -->
-            <div class="pg" id="p-ra">
-                <div class="bc">Bab 1 &gt; <b>Ringkasan</b></div>
-                <h2 class="pg-h1">&#128203; Ringkasan Bab 1</h2>
-                <h3 class="m-h3">1. Pengertian</h3>
-                <ul class="m-ul"><li><strong>Haji:</strong> "Menyengaja" — mengunjungi Baitullah & Arafah pada Asyhur al-Haj.</li><li><strong>Umrah:</strong> "Ziarah" — tawaf, sa'i, bercukur di Baitullah tanpa terikat waktu.</li></ul>
-                <h3 class="m-h3">2. Hukum</h3>
-                <p class="m-p">Rukun Islam ke-5, wajib sekali seumur hidup. Makna: simbol persatuan, penyucian diri, latihan fisik & mental, semangat berkorban, muktamar akbar.</p>
-                <h3 class="m-h3">3. Syarat Wajib</h3>
-                <ol class="m-ol"><li><strong>Islam</strong> — mutlak</li><li><strong>Baligh</strong></li><li><strong>Berakal</strong></li><li><strong>Merdeka</strong></li><li><strong>Mampu</strong> — fisik, finansial, keamanan, mahram (perempuan)</li></ol>
-                <h3 class="m-h3">4. Pembatal</h3>
-                <ul class="m-ul"><li>Jimak sebelum tahallul: batal + dam + qadha</li><li>Meninggalkan rukun: tidak sah</li></ul>
-                <h3 class="m-h3">5. Dam</h3>
-                <ul class="m-ul"><li>Pelanggaran wajib: kambing / puasa 10 hari</li><li>Larangan ihram: kambing / puasa 3 hari / sedekah</li><li>Membunuh buruan: hewan sepadan</li></ul>
-                <div class="m-box m-box-ok"><strong>&#9989; Kesimpulan:</strong> Keabsahan bergantung pada pemenuhan syarat wajib dan penjagaan rukun. Pelanggaran aturan ihram tidak selalu membatalkan, tapi menuntut Dam sebagai penyucian.</div>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('f',document.querySelector('[data-t=f]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-ra" onclick="done('ra')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('g',document.querySelector('[data-t=g]'))">Bab 2 &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== G: Alur Haji ========== -->
-            <div class="pg" id="p-g">
-                <div class="bc">Bab 2 &gt; <b>Alur Rangkaian Ibadah Haji</b></div>
-                <h2 class="pg-h1">Alur Rangkaian Ibadah Haji</h2>
-                <p class="pg-sub">9 tahapan dari ihram hingga thawaf wada'.</p>
-                <div class="m-img">
-                    <img src="https://i.ibb.co.com/PvfS4JNm/Chat-GPT-Image-2-Mei-2026-14-36-10.png" alt="Alur Ibadah Haji">
-                    <div class="m-img-cap">Infografis: Alur Rangkaian Ibadah Haji</div>
-                </div>
-                <div class="m-step-r"><span class="m-step">1</span><div class="m-p"><strong>Ihram Haji (8 Dzulhijjah)</strong> — Mandi sunnah, wewangian (tubuh bukan pakaian), pakai dua helai kain putih (laki-laki), niat haji. Seluruh larangan ihram berlaku.</div></div>
-                <div class="m-step-r"><span class="m-step">2</span><div class="m-p"><strong>Mabit di Mina — Hari Tarwiyah (8 Dzulhijjah)</strong> — Shalat 5 waktu secara <strong>qashar</strong> pada waktunya masing-masing (tidak dijam').</div></div>
-                <div class="m-box m-box-r"><strong>&#11088; Tahap 3: Wukuf di Arafah (9 Dzulhijjah) — PUNCAK HAJI</strong><br>"Haji itu adalah Arafah." Tanpa wukuf = <strong>TIDAK SAH</strong>, tidak ada dam pengganti. Waktu: Dzuhur hingga terbenam. Kegiatan: khutbah, shalat jam' takdim qashar, doa, dzikir, istighfar.</div>
-                <div class="m-step-r"><span class="m-step">4</span><div class="m-p"><strong>Mabit di Muzdalifah (Malam 10)</strong> — Shalat Maghrib & Isya <em>jam' takhir qashar</em>, kumpulkan 7 batu kerikil.</div></div>
-                <div class="m-step-r"><span class="m-step">5</span><div class="m-p"><strong>Lontar Jumrah Aqabah & Tahallul Awal (10)</strong> — 7 batu ke pilar Aqabah, lalu cukur/potong rambut. Larangan ihram longgar kecuali jimak.</div></div>
-                <div class="m-step-r"><span class="m-step">6</span><div class="m-p"><strong>Penyembelihan Dam/Kurban</strong> — Bagi Tamattu': wajib sembelih kambing sebagai hadyu.</div></div>
-                <div class="m-step-r"><span class="m-step">7</span><div class="m-p"><strong>Thawaf Ifadhah & Sa'i</strong> — 7 putaran Ka'bah + 7 kali Shafa-Marwah. <strong>Tahallul Tsani</strong> (seluruh larangan berakhir).</div></div>
-                <div class="m-step-r"><span class="m-step">8</span><div class="m-p"><strong>Mabit di Mina & Lontar 3 Jumrah (11-13)</strong> — Ula, Wustha, Aqabah masing-masing 7 kali/hari. <strong>Nafar Awal</strong> (pulang 12) atau <strong>Nafar Tsani</strong> (hingga 13).</div></div>
-                <div class="m-step-r"><span class="m-step">9</span><div class="m-p"><strong>Thawaf Wada'</strong> — Thawaf perpisahan sebelum meninggalkan Makkah. Tidak disertai sa'i.</div></div>
-                <hr class="m-hr">
-                <div class="m-embed"><iframe src="https://www.canva.com/design/DAHIqS2E7v0/lFdgQTA9Gmf85khZnDJb_A/watch?embed" allowfullscreen allow="fullscreen" loading="lazy"></iframe></div>
-                <p class="m-embed-cap">Animasi: Alur Ibadah Haji — Desain oleh Zayyan Novalaziz</p>
-                <p class="m-p" style="text-align:center;"><a href="https://www.canva.com/design/DAHIqS2E7v0/lFdgQTA9Gmf85khZnDJb_A/watch" target="_blank" rel="noopener" class="m-ext">&#128279; Buka di tab baru</a></p>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('ra',document.querySelector('[data-t=ra]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-g" onclick="done('g')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('h',document.querySelector('[data-t=h]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== H: Alur Umroh ========== -->
-            <div class="pg" id="p-h">
-                <div class="bc">Bab 2 &gt; <b>Alur Rangkaian Ibadah Umroh</b></div>
-                <h2 class="pg-h1">Alur Rangkaian Ibadah Umroh</h2>
-                <p class="pg-sub">4 tahapan singkat, bisa kapan saja sepanjang tahun.</p>
-                <div class="m-step-r"><span class="m-step">1</span><div class="m-p"><strong>Ihram</strong> — Mengambil miqat, pakai pakaian ihram, niat umroh. Larangan ihram berlaku.</div></div>
-                <div class="m-step-r"><span class="m-step">2</span><div class="m-p"><strong>Thawaf</strong> — Mengelilingi Ka'bah <strong>7 putaran</strong>.</div></div>
-                <div class="m-step-r"><span class="m-step">3</span><div class="m-p"><strong>Sa'i</strong> — Berjalan dan berlari-lari kecil antara <strong>Shafa dan Marwah 7 kali</strong>.</div></div>
-                <div class="m-step-r"><span class="m-step">4</span><div class="m-p"><strong>Tahallul</strong> — Cukur/potong rambut. Seluruh larangan ihram berakhir.</div></div>
-                <div class="m-box m-box-ok"><strong>&#9989; Perbedaan Utama:</strong> Umroh tidak perlu wukuf, mabit, atau lontar jumrah. Seluruh rangkaian hanya di Masjidil Haram.</div>
-                <hr class="m-hr">
-                <div class="m-embed"><iframe src="https://www.youtube.com/embed/vuquArQIT4U" allowfullscreen allow="fullscreen" loading="lazy"></iframe></div>
-                <p class="m-embed-cap">Video: Alur Ibadah Umroh</p>
-                <p class="m-p" style="text-align:center;"><a href="https://youtu.be/vuquArQIT4U" target="_blank" rel="noopener" class="m-ext">&#128279; Buka di YouTube</a></p>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('g',document.querySelector('[data-t=g]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-h" onclick="done('h')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('rb',document.querySelector('[data-t=rb]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== RB: Ringkasan Bab 2 ========== -->
-            <div class="pg" id="p-rb">
-                <div class="bc">Bab 2 &gt; <b>Ringkasan</b></div>
-                <h2 class="pg-h1">&#128203; Ringkasan Bab 2</h2>
-                <h3 class="m-h3">Alur Haji</h3>
-                <ol class="m-ol"><li><strong>8 Dzulhijjah:</strong> Ihram &rarr; Mabit Mina</li><li><strong>9:</strong> Wukuf Arafah (puncak)</li><li><strong>Malam 10:</strong> Muzdalifah, ambil batu</li><li><strong>10:</strong> Lontar Aqabah &rarr; Tahallul Awal &rarr; Dam &rarr; Thawaf Ifadhah &rarr; Sa'i &rarr; Tahallul Tsani</li><li><strong>11–13:</strong> Lontar 3 jumrah/hari</li><li>Thawaf Wada'</li></ol>
-                <h3 class="m-h3">Alur Umroh</h3>
-                <ol class="m-ol"><li>Ihram</li><li>Thawaf 7 putaran</li><li>Sa'i 7 kali</li><li>Tahallul</li></ol>
-                <div class="m-tbl-w">
-                    <table class="m-tbl"><thead><tr><th>Aspek</th><th>Haji</th><th>Umroh</th></tr></thead>
-                    <tbody><tr><td>Waktu</td><td>Terikat</td><td>Kapan saja</td></tr><tr><td>Wukuf</td><td>Ada</td><td>Tidak ada</td></tr><tr><td>Mabit & Lontar</td><td>Ada</td><td>Tidak ada</td></tr><tr><td>Durasi</td><td>4–6 hari</td><td>Beberapa jam</td></tr></tbody></table>
-                </div>
-                <div class="m-box m-box-ok"><strong>&#9989; Kesimpulan:</strong> Haji = multi-lokasi (Arafah, Muzdalifah, Mina, Makkah). Umroh = hanya Masjidil Haram (Thawaf, Sa'i, Tahallul).</div>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('h',document.querySelector('[data-t=h]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-rb" onclick="done('rb')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('i',document.querySelector('[data-t=i]'))">Bab 3 &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== I: Keutamaan Makkah & Madinah ========== -->
-            <div class="pg" id="p-i">
-                <div class="bc">Bab 3 &gt; <b>Keutamaan Makkah & Madinah</b></div>
-                <h2 class="pg-h1">Keutamaan Makkah & Madinah</h2>
-                <p class="pg-sub">Mengenal keistimewaan dua kota suci dalam Islam.</p>
-                <p class="m-p">Makkah = tempat Ka'bah (kiblat umat Islam). Madinah = kota hijrah Rasulullah SAW dan pusat peradaban Islam awal.</p>
-                <div class="m-embed"><iframe src="https://www.canva.com/design/DAHIf-sXLVc/xY1zw2fpSDof6yYyU6dX6Q/view?embed" allowfullscreen allow="fullscreen" loading="lazy"></iframe></div>
-                <p class="m-embed-cap">Presentasi: Keutamaan Makkah & Madinah</p>
-                <p class="m-p" style="text-align:center;"><a href="https://www.canva.com/design/DAHIf-sXLVc/xY1zw2fpSDof6yYyU6dX6Q/view" target="_blank" rel="noopener" class="m-ext">&#128279; Buka di tab baru</a></p>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('rb',document.querySelector('[data-t=rb]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-i" onclick="done('i')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('j',document.querySelector('[data-t=j]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== J: Adab Masjid Nabawi ========== -->
-            <div class="pg" id="p-j">
-                <div class="bc">Bab 3 &gt; <b>Adab di Masjid Nabawi</b></div>
-                <h2 class="pg-h1">Adab di Masjid Nabawi</h2>
-                <p class="pg-sub">Tata krama saat berkunjung ke Masjid Nabawi di Madinah.</p>
-                <ol class="m-ol"><li>Masuk kaki kanan, baca doa masuk masjid.</li><li>Shalat tahiyatul masjid 2 rakaat sebelum duduk.</li><li>Kunjungi makam Rasulullah SAW dengan tertib dan sopan.</li><li>Tinggikan suara berlebihan di area makam.</li><li>Berdoa kepada Allah, bukan kepada Rasulullah — cukup beri salam.</li><li>Jaga kebersihan dan ketenangan.</li><li>Perbanyak ibadah dan doa di <strong>Raudhah</strong> (bagian surga).</li></ol>
-                <div class="m-box m-box-g"><strong>&#128204; Catatan:</strong> Materi lengkap sedang dikembangkan untuk pembaruan selanjutnya.</div>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('i',document.querySelector('[data-t=i]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-j" onclick="done('j')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('k',document.querySelector('[data-t=k]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== K: Situs Sejarah ========== -->
-            <div class="pg" id="p-k">
-                <div class="bc">Bab 3 &gt; <b>Situs Sejarah</b></div>
-                <h2 class="pg-h1">Situs Sejarah</h2>
-                <p class="pg-sub">Menjelajahi situs bersejarah di Makkah dan Madinah.</p>
-                <p class="m-p">Di sekitar Makkah dan Madinah terdapat banyak situs bersejarah yang berkaitan dengan perjalanan Islam.</p>
-                <div class="m-embed"><iframe src="https://www.youtube.com/embed/Qm-tNo5T-Nk" allowfullscreen allow="fullscreen" loading="lazy"></iframe></div>
-                <p class="m-embed-cap">Video: Situs Sejarah di Makkah dan Madinah</p>
-                <p class="m-p" style="text-align:center;"><a href="https://youtu.be/Qm-tNo5T-Nk" target="_blank" rel="noopener" class="m-ext">&#128279; Buka di YouTube</a></p>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('j',document.querySelector('[data-t=j]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-k" onclick="done('k')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('rc',document.querySelector('[data-t=rc]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== RC: Ringkasan Bab 3 ========== -->
-            <div class="pg" id="p-rc">
-                <div class="bc">Bab 3 &gt; <b>Ringkasan</b></div>
-                <h2 class="pg-h1">&#128203; Ringkasan Bab 3</h2>
-                <div class="m-box m-box-g"><strong>&#128204; Catatan:</strong> Ringkasan Bab 3 sedang disusun untuk pembaruan berikutnya.</div>
-                <ol class="m-ol"><li>Keutamaan Makkah sebagai tempat Ka'bah dan kiblat.</li><li>Keutamaan Madinah sebagai kota Nabi dan hijrah.</li><li>Adab berkunjung ke Masjid Nabawi.</li><li>Situs bersejarah di sekitar kota suci.</li></ol>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('k',document.querySelector('[data-t=k]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-rc" onclick="done('rc')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('l',document.querySelector('[data-t=l]'))">Bab 4 &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== L: Kumpulan Doa ========== -->
-            <div class="pg" id="p-l">
-                <div class="bc">Bab 4 &gt; <b>Kumpulan Doa Manasik</b></div>
-                <h2 class="pg-h1">Kumpulan Doa Manasik</h2>
-                <p class="pg-sub">Doa-doa penting selama pelaksanaan ibadah haji dan umroh.</p>
-                <div class="m-embed"><iframe src="https://www.canva.com/design/DAHIgMuOij8/v3etyEsx0xxedw--Voma4g/view?embed" allowfullscreen allow="fullscreen" loading="lazy"></iframe></div>
-                <p class="m-embed-cap">Presentasi: Kumpulan Doa Manasik</p>
-                <p class="m-p" style="text-align:center;"><a href="https://www.canva.com/design/DAHIgMuOij8/v3etyEsx0xxedw--Voma4g/view" target="_blank" rel="noopener" class="m-ext">&#128279; Buka di tab baru</a></p>
-                <hr class="m-hr">
-                <h3 class="m-h3">Doa-Doa Penting</h3>
-                <h4 class="m-h4">Niat Ihram Haji</h4>
-                <div class="m-doa">&#1576;&#1616;&#1587;&#1618;&#1605;&#1616; &#1575;&#1604;&#1604;&#1617;&#1607;&#1616; &#1608;&#1575;&#1604;&#1604;&#1617;&#1607;&#1615; &#1571;&#1614;&#1603;&#1618;&#1576;&#1614;&#1585;&#1615;&#1548; &#1575;&#1604;&#1604;&#1617;&#1607;&#1615;&#1605;&#1617; &#1604;&#1614;&#1576;&#1617;&#1614;&#1610;&#1618;&#1603;&#1614; &#1581;&#1614;&#1580;&#1617;&#1617;&#1575;</div>
-                <p class="m-doa-latin">"Bismillahi wallahu akbar, Allahumma labbaika hajjan."</p>
-                <h4 class="m-h4">Niat Ihram Umroh</h4>
-                <div class="m-doa">&#1576;&#1616;&#1587;&#1618;&#1605;&#1616; &#1575;&#1604;&#1604;&#1617;&#1607;&#1616; &#1608;&#1575;&#1604;&#1604;&#1617;&#1607;&#1615; &#1571;&#1614;&#1603;&#1618;&#1576;&#1614;&#1585;&#1615;&#1548; &#1575;&#1604;&#1604;&#1617;&#1607;&#1615;&#1605;&#1617; &#1604;&#1614;&#1576;&#1617;&#1614;&#1610;&#1618;&#1603;&#1614; &#1593;&#1614;&#1605;&#1618;&#1585;&#1614;&#1577;&#1617;&#1575;</div>
-                <p class="m-doa-latin">"Bismillahi wallahu akbar, Allahumma labbaika umratan."</p>
-                <h4 class="m-h4">Talbiyah</h4>
-                <div class="m-doa">&#1604;&#1614;&#1576;&#1617;&#1614;&#1610;&#1618;&#1603;&#1614; &#1575;&#1604;&#1604;&#1617;&#1607;&#1615;&#1605;&#1617; &#1604;&#1614;&#1576;&#1617;&#1614;&#1610;&#1618;&#1603;&#1614;&#1548; &#1604;&#1614;&#1576;&#1617;&#1614;&#1610;&#1618;&#1603;&#1614; &#1604;&#1614;&#1575; &#1588;&#1614;&#1585;&#1616;&#1610;&#1618;&#1603;&#1614; &#1604;&#1614;&#1603;&#1614; &#1604;&#1614;&#1576;&#1617;&#1614;&#1610;&#1618;&#1603;&#1614;&#1548; &#1573;&#1616;&#1606;&#1617;&#1614; &#1575;&#1604;&#1618;&#1581;&#1614;&#1605;&#1618;&#1583;&#1614; &#1608;&#1575;&#1604;&#1606;&#1617;&#1616;&#1593;&#1618;&#1605;&#1614;&#1577;&#1614; &#1604;&#1614;&#1603;&#1614; &#1608;&#1575;&#1604;&#1605;&#1615;&#1604;&#1618;&#1603;&#1614;&#1548; &#1604;&#1614;&#1575; &#1588;&#1614;&#1585;&#1616;&#1610;&#1618;&#1603;&#1614; &#1604;&#1614;&#1603;&#1614;</div>
-                <p class="m-doa-latin">"Labbaika Allahumma labbaik, labbaika laa syarika laka labbaik, innal hamda wan ni'mata laka wal mulk, laa syarika laka."</p>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('rc',document.querySelector('[data-t=rc]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-l" onclick="done('l')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('m',document.querySelector('[data-t=m]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== M: Kuis ========== -->
-            <div class="pg" id="p-m">
-                <div class="bc">Bab 5 &gt; <b>Kuis Pemahaman</b></div>
-                <h2 class="pg-h1">Latihan & Kuis</h2>
-                <p class="pg-sub">Uji pemahamanmu tentang materi haji dan umroh.</p>
-                <p class="m-p">Setelah mempelajari Bab 1–4, uji pemahamanmu melalui kuis interaktif berikut.</p>
-                <div class="m-box m-box-g"><strong>&#128161; Tips:</strong> Baca tiap pertanyaan teliti. Jika ragu, ingat kembali materi. Jangan terburu-buru!</div>
-                <a href="https://gemini.google.com/share/a5ceb6e909d4" target="_blank" rel="noopener" class="m-lc">
-                    <div class="m-lc-ico">&#128221;</div>
-                    <div class="m-lc-txt"><h4>Buka Kuis Pemahaman</h4><p>Kuis interaktif tentang materi haji dan umroh</p></div>
-                    <div class="m-lc-arr">&#8594;</div>
-                </a>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('l',document.querySelector('[data-t=l]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-m" onclick="done('m')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" onclick="go('n',document.querySelector('[data-t=n]'))">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-            <!-- ========== N: Game ========== -->
-            <div class="pg" id="p-n">
-                <div class="bc">Bab 6 &gt; <b>Game Interaktif</b></div>
-                <h2 class="pg-h1">Game Manasik Haji & Umroh</h2>
-                <p class="pg-sub">Belajar sambil bermain!</p>
-                <p class="m-p">Game edukasi interaktif untuk memperkuat pemahaman ibadah haji dan umroh dengan cara menyenangkan.</p>
-                <div class="m-box m-box-y"><strong>&#127918; Cara Bermain:</strong> Klik tombol di bawah, ikuti petunjuk di dalam game. Mainkan sambil mengingat materi!</div>
-                <a href="https://gemini.google.com/share/62eeaa38dec8" target="_blank" rel="noopener" class="m-lc">
-                    <div class="m-lc-ico">&#127918;</div>
-                    <div class="m-lc-txt"><h4>Mainkan Game Manasik</h4><p>Game edukasi interaktif tentang haji dan umroh</p></div>
-                    <div class="m-lc-arr">&#8594;</div>
-                </a>
-                <div class="m-nav">
-                    <a class="mn-prev" onclick="go('m',document.querySelector('[data-t=m]'))">&#8592; Sebelumnya</a>
-                    <a class="mn-ok" id="d-n" onclick="done('n')">&#10003; Tandai Selesai</a>
-                    <a class="mn-next" style="visibility:hidden;">Selanjutnya &#8594;</a>
-                </div>
-            </div>
-
-        </main>
+  <!-- Navbar (sama dengan landing page) -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar-inner">
+      <a href="index.html" class="navbar-logo">← Zavira Haramain</a>
+      <ul class="navbar-menu" id="navbarMenu">
+        <li><a href="index.html" class="nav-link">Beranda</a></li>
+        <li><a href="#sub-1-1" class="nav-link">Materi</a></li>
+        <li><a href="#sub-5-1" class="nav-link">Kuis</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Menu navigasi">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
     </div>
+  </nav>
 
-    <!-- ============================
-         JAVASCRIPT LMS
-         ============================ -->
-    <script>
-        /* ============================================
-           JS HALAMAN BELAJAR (LMS Mini)
-           - Navigasi sidebar & konten
-           - Toggle chapter collapse/expand
-           - Progres belajar (localStorage)
-           - Sidebar mobile (hamburger + overlay)
-           ============================================ */
+  <!-- Overlay untuk sidebar mobile -->
+  <div class="lms-overlay" id="lmsOverlay"></div>
 
-        // Semua ID konten (untuk hitung progres)
-        var IDS = ['a','b','c','d','e','f','ra','g','h','rb','i','j','k','rc','l','m','n'];
+  <!-- Tombol toggle sidebar (mobile) -->
+  <button class="lms-toggle" id="lmsToggle" aria-label="Buka menu materi">📚</button>
 
-        // Baca progres dari localStorage
-        function ld() { try { var d = localStorage.getItem('zv_p'); return d ? JSON.parse(d) : {}; } catch(e) { return {}; } }
+  <!-- ==================== LAYOUT LMS ==================== -->
+  <div class="lms-wrapper">
 
-        // Simpan progres ke localStorage
-        function sv(p) { try { localStorage.setItem('zv_p', JSON.stringify(p)); } catch(e) {} }
+    <!-- ===== SIDEBAR: Daftar Bab ===== -->
+    <aside class="lms-sidebar" id="lmsSidebar">
+      <div class="lms-sidebar-header">
+        <h3>BELAJAR HAJI & UMROH</h3>
+        <p>Belajar haji dan umroh kini jadi lebih mudah, seru, dan interaktif!</p>
+      </div>
 
-        // Update tampilan progres (bar, persen, badge, tombol, centang)
-        function up() {
-            var p = ld(), c = 0, i;
-            for (i = 0; i < IDS.length; i++) if (p[IDS[i]]) c++;
-            var pct = Math.round(c / IDS.length * 100);
+      <!-- Bab 1 -->
+      <div class="lms-bab">
+        <button class="lms-bab-title active" data-bab="bab1">
+          Bab 1: Konsep Dasar Haji & Umroh
+          <span class="lms-bab-arrow">▶</span>
+        </button>
+        <div class="lms-sub-list open" id="bab1">
+          <a href="#sub-1-1" class="lms-sub-link active-sub">1.1 Pengertian Haji & Umroh</a>
+          <a href="#sub-1-2" class="lms-sub-link">1.2 Hukum Haji & Umroh</a>
+          <a href="#sub-1-3" class="lms-sub-link">1.3 Perbedaan Haji dan Umroh</a>
+          <a href="#sub-1-4" class="lms-sub-link">1.4 Syarat Wajib Haji</a>
+          <a href="#sub-1-5" class="lms-sub-link">1.5 Dalil dan Niat</a>
+          <a href="#sub-1-6" class="lms-sub-link">1.6 Hal yang Membatalkan</a>
+          <a href="#sub-1-7" class="lms-sub-link">1.7 Game</a>
+        </div>
+      </div>
 
-            var f = document.getElementById('sFill');
-            var t = document.getElementById('sPct');
-            var h = document.getElementById('hPct');
-            var w = document.getElementById('wDone');
-            if (f) f.style.width = pct + '%';
-            if (t) t.textContent = pct + '%';
-            if (h) h.textContent = pct + '%';
-            if (w) w.textContent = c;
+      <!-- Bab 2 -->
+      <div class="lms-bab">
+        <button class="lms-bab-title" data-bab="bab2">
+          Bab 2: Alur Rangkaian Ibadah
+          <span class="lms-bab-arrow">▶</span>
+        </button>
+        <div class="lms-sub-list" id="bab2">
+          <a href="#sub-2-1" class="lms-sub-link">2.1 Alur Ibadah Haji</a>
+          <a href="#sub-2-2" class="lms-sub-link">2.2 Alur Ibadah Umroh</a>
+          <a href="#sub-2-3" class="lms-sub-link">2.3 Game</a>
+        </div>
+      </div>
 
-            // Update tombol dan centang sidebar
-            for (i = 0; i < IDS.length; i++) {
-                var id = IDS[i];
-                var btn = document.getElementById('d-' + id);
-                var lnk = document.querySelector('[data-t="' + id + '"]');
-                if (p[id]) {
-                    if (btn) { btn.classList.add('did'); btn.innerHTML = '&#10003; Sudah Selesai'; }
-                    if (lnk) lnk.classList.add('ok');
-                } else {
-                    if (btn) { btn.classList.remove('did'); btn.innerHTML = '&#10003; Tandai Selesai'; }
-                    if (lnk) lnk.classList.remove('ok');
-                }
+      <!-- Bab 3 -->
+      <div class="lms-bab">
+        <button class="lms-bab-title" data-bab="bab3">
+          Bab 3: Ziarah & Kota Suci
+          <span class="lms-bab-arrow">▶</span>
+        </button>
+        <div class="lms-sub-list" id="bab3">
+          <a href="#sub-3-1" class="lms-sub-link">3.1 Keutamaan Makkah & Madinah</a>
+          <a href="#sub-3-2" class="lms-sub-link">3.2 Adab di Masjid Nabawi</a>
+          <a href="#sub-3-3" class="lms-sub-link">3.3 Situs Sejarah</a>
+        </div>
+      </div>
+
+      <!-- Bab 4 -->
+      <div class="lms-bab">
+        <button class="lms-bab-title" data-bab="bab4">
+          Bab 4: Kumpulan Doa
+          <span class="lms-bab-arrow">▶</span>
+        </button>
+        <div class="lms-sub-list" id="bab4">
+          <a href="#sub-4-1" class="lms-sub-link">4.1 Kumpulan Doa Manasik</a>
+        </div>
+      </div>
+
+      <!-- Bab 5 -->
+      <div class="lms-bab">
+        <button class="lms-bab-title" data-bab="bab5">
+          Bab 5: Latihan & Kuis
+          <span class="lms-bab-arrow">▶</span>
+        </button>
+        <div class="lms-sub-list" id="bab5">
+          <a href="#sub-5-1" class="lms-sub-link">5.1 Kuis Interaktif</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== KONTEN UTAMA ===== -->
+    <main class="lms-content">
+
+      <!-- Header Halaman Pembelajaran -->
+      <div class="lms-content-header">
+        <h1>📖 BELAJAR HAJI & UMROH</h1>
+        <p>Belajar haji dan umroh kini jadi lebih mudah, seru, dan interaktif! Aplikasi ini hadir sebagai solusi pembelajaran digital yang membantu siswa memahami setiap tahapan ibadah haji dan umroh dengan cara yang sederhana dan menyenangkan.</p>
+      </div>
+
+      <!-- ==============================
+           BAB 1: KONSEP DASAR HAJI & UMROH
+           ============================== -->
+      <div class="materi-section" id="bab1-content">
+        <h2>Bab 1: Konsep Dasar Haji & Umroh</h2>
+
+        <!-- Subbab 1.1 -->
+        <div id="sub-1-1" class="materi-sub">
+          <h3>1.1 Pengertian Haji & Umroh</h3>
+          <p>Secara harfiah Haji dapat diartikan sebagai tujuan, maksud, dan menyengaja, yaitu bermaksud mendatangi tempat yang diagungkan, mendatangi secara pisik dan jiwa ke Baitullah untuk menunaikan amalan-amalan tertentu atau mengunjungi tempat-tempat tertentu pada waktu tertentu untuk melakukan amalan-amalan tertentu.</p>
+          <p>Sedangkan Umrah secara harfiah berarti ziarah atau berziarah ke tempat yang mulia "Baitullah" untuk melaksanakan amalan-amalan tertentu yang terdiri atas tawaf, sa'i dan bercukur.</p>
+          <p>Yang dimaksud dengan tempat-tempat tertentu di atas adalah Ka'bah dan Arafah, sedangkan waktu-waktu tertentu adalah asyhur al-haj (bulan-bulan haji) yang terdiri atas syawal, zulkaidah dan 10 hari pertama zulhijah.</p>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 1.2 -->
+        <div id="sub-1-2" class="materi-sub">
+          <h3>1.2 Hukum Haji & Umroh</h3>
+          <p>Haji merupakan rukun Islam yang kelima yang diwajibkan bagi seorang Muslim yang memiliki kemapuan untuk melaksakan sekali sepanjang hidupnya. Pelaksanaan haji merupakan ibadah mahdah yang bersifat ta'abbudi yang pelaksaannya mengandung banyak rahasia-rahasia dan simbol-simbol seperti memakai ihram sebagai simbol manusia harus melepaskan diri dari hawa nafsu dan hanya menghadapkan diri kepada Allah Yang Maha Agung, memperteguh keimanan dan takwaan kepada Allah Swt.</p>
+          <p>Ibadah haji adalah sebagai tindak lanjut dalam pembentukan sikap mental dan akhlak yang mulia. Ibadah haji adalah merupakan pernyataan umat islam seluruh dunia menjadi umat yang satu karena memiliki persamaan atau satu akidah. Memperkuat fisik dan mental, kerena ibadah haji maupun umrah merupakan ibadah yang berat memerlukan persiapan fisik yang kuat, biaya besar dan memerlukan kesabaran serta ketabahan dalam menghadapi segala godaan dan rintangan.</p>
+          <p>Ibadah haji menumbuhkan semangat berkorban, baik harta, benda, jiwa besar dan pemurah, tenaga serta waktu untuk melakukannya. Dengan melaksanakan ibadah haji bisa dimanfaatkan untuk membangun persatuan dan kesatuan umat Islam sedunia. Ibadah haji merupakan muktamar akbar umat islam sedunia, yang peserta-pesertanya berdatangan dari seluruh penjuru dunia dan Ka'bahlah yang menjadi simbol kesatuan dan persatuan.</p>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 1.3 -->
+        <div id="sub-1-3" class="materi-sub">
+          <h3>1.3 Perbedaan Haji dan Umroh</h3>
+          <p>Berikut adalah tabel perbedaan antara ibadah Haji dan Umroh:</p>
+          <img
+            src="https://i.ibb.co.com/Xf0K8t76/Chat-GPT-Image-May-2-2026-03-10-06-PM.png"
+            alt="Tabel perbedaan haji dan umroh"
+            class="materi-img"
+          >
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 1.4 -->
+        <div id="sub-1-4" class="materi-sub">
+          <h3>1.4 Syarat Wajib Haji</h3>
+          <p>Syarat wajib haji adalah ketentuan yang harus dipenuhi oleh seorang Muslim agar ia terkena kewajiban melaksanakan ibadah haji. Apabila salah satu syarat ini tidak terpenuhi, maka kewajiban haji belum berlaku atas dirinya. Namun, jika tetap dilaksanakan, dalam beberapa kondisi ibadahnya bisa tetap sah tetapi tidak menggugurkan kewajiban utama.</p>
+
+          <h4>1. Islam</h4>
+          <p>Syarat pertama adalah beragama Islam. Ibadah haji merupakan bagian dari rukun Islam, sehingga hanya diwajibkan kepada orang yang telah memeluk agama Islam. Hal ini karena haji adalah bentuk ketaatan dan penghambaan kepada Allah, yang hanya dapat dilakukan oleh seorang Muslim yang beriman. Oleh karena itu, orang non-Muslim tidak dibebani kewajiban haji dan jika ia melaksanakannya, maka ibadah tersebut tidak dianggap sah menurut syariat.</p>
+          <p>Selain itu, keislaman menjadi dasar diterimanya seluruh amal ibadah. Tanpa iman, amal ibadah tidak memiliki nilai di sisi Allah. Maka dari itu, syarat ini bersifat mutlak dan tidak dapat digantikan oleh syarat lainnya.</p>
+
+          <h4>2. Baligh</h4>
+          <p>Baligh berarti seseorang telah mencapai usia dewasa menurut ketentuan syariat. Tanda-tanda baligh antara lain haid bagi perempuan, mimpi basah bagi laki-laki, atau mencapai usia tertentu (sekitar 15 tahun menurut sebagian ulama). Kewajiban haji hanya berlaku bagi mereka yang sudah baligh karena pada fase ini seseorang dianggap telah mampu memikul tanggung jawab hukum (taklif).</p>
+          <p>Anak-anak yang belum baligh tidak diwajibkan haji. Namun, jika mereka melaksanakan haji, maka ibadahnya tetap sah sebagai ibadah sunnah dan akan mendapatkan pahala. Meskipun demikian, ketika mereka telah baligh, kewajiban haji tetap berlaku jika syarat lainnya terpenuhi, sehingga haji yang dilakukan saat kecil belum menggugurkan kewajiban haji yang sesungguhnya.</p>
+
+          <h4>3. Berakal (Aqil)</h4>
+          <p>Syarat berikutnya adalah berakal, yaitu memiliki kemampuan berpikir dan memahami. Orang yang tidak berakal, seperti mengalami gangguan jiwa berat atau kehilangan kesadaran secara permanen, tidak dikenai kewajiban haji. Hal ini karena dalam Islam, setiap kewajiban ibadah hanya dibebankan kepada orang yang mampu memahami perintah dan larangan.</p>
+          <p>Akal menjadi dasar seseorang dalam membedakan yang benar dan salah, serta memahami tata cara ibadah. Tanpa akal, seseorang tidak dapat menjalankan ibadah dengan kesadaran dan niat yang benar. Oleh karena itu, syarat ini sangat penting dalam menentukan apakah seseorang termasuk mukallaf (orang yang dibebani hukum) atau tidak.</p>
+
+          <h4>4. Merdeka</h4>
+          <p>Pada masa lalu, syarat merdeka berkaitan dengan status sosial seseorang, yaitu bukan seorang budak. Budak tidak diwajibkan haji karena tidak memiliki kebebasan dalam menentukan tindakan dan tidak memiliki kemampuan penuh secara finansial maupun fisik untuk melakukan perjalanan jauh seperti haji.</p>
+          <p>Dalam konteks modern, perbudakan sudah tidak berlaku, sehingga syarat ini secara praktis tidak lagi menjadi hambatan. Namun, secara konsep, syarat ini menunjukkan bahwa kewajiban haji hanya dibebankan kepada orang yang memiliki kebebasan dan kendali atas dirinya sendiri.</p>
+
+          <h4>5. Mampu (Istitha'ah)</h4>
+          <p>Syarat terakhir dan paling luas adalah mampu (istitha'ah). Kemampuan ini mencakup berbagai aspek yang saling berkaitan, yaitu:</p>
+
+          <p><strong>a. Kemampuan fisik</strong><br>
+          Seseorang harus dalam kondisi sehat dan kuat untuk menjalankan rangkaian ibadah haji yang cukup berat, seperti thawaf, sa'i, wukuf di Arafah, dan perjalanan antar tempat. Jika seseorang sakit parah atau tidak memungkinkan untuk bepergian, maka kewajiban haji bisa ditunda atau diwakilkan (badal haji) dalam kondisi tertentu.</p>
+
+          <p><strong>b. Kemampuan finansial</strong><br>
+          Haji membutuhkan biaya yang tidak sedikit, meliputi biaya transportasi, akomodasi, konsumsi, dan kebutuhan lainnya selama perjalanan. Seseorang dianggap mampu jika ia memiliki biaya tersebut tanpa mengorbankan kebutuhan pokok dirinya dan keluarganya yang ditinggalkan. Islam tidak membebani seseorang dengan kewajiban yang dapat menimbulkan kesulitan hidup.</p>
+
+          <p><strong>c. Keamanan perjalanan</strong><br>
+          Perjalanan menuju tanah suci harus dalam kondisi aman, baik dari segi transportasi, kondisi wilayah, maupun situasi politik. Jika perjalanan berisiko tinggi atau membahayakan jiwa, maka kewajiban haji belum berlaku hingga kondisi memungkinkan.</p>
+
+          <p><strong>d. Ketentuan bagi perempuan</strong><br>
+          Bagi perempuan, terdapat ketentuan tambahan menurut sebagian ulama, yaitu harus didampingi mahram atau berada dalam rombongan yang aman dan terpercaya. Hal ini bertujuan untuk menjaga keselamatan dan kehormatan selama perjalanan jauh.</p>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 1.5 -->
+        <div id="sub-1-5" class="materi-sub">
+          <h3>1.5 Dalil dan Niat Haji dan Umroh</h3>
+          <p>Simak penjelasan mengenai dalil dan niat haji serta umroh melalui video pembelajaran berikut:</p>
+          <div class="embed-container">
+            <iframe
+              src="https://www.canva.com/design/DAHIqXgKJt4/ts3JvFdb-NQ1UfgRgLYqsw/watch?embed"
+              allowfullscreen="allowfullscreen"
+              allow="fullscreen"
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 1.6 -->
+        <div id="sub-1-6" class="materi-sub">
+          <h3>1.6 Hal-Hal yang Membatalkan Haji & Umroh</h3>
+          <p><strong>Hal-hal yang Membatalkan Haji dan Umroh beserta Dam dan Kafarat</strong></p>
+          <p>Ibadah haji dan umroh merupakan ibadah yang memiliki rukun dan ketentuan yang harus dipenuhi. Suatu ibadah dinyatakan tidak sah atau batal apabila salah satu rukunnya ditinggalkan atau terjadi pelanggaran berat yang telah ditetapkan dalam fiqih.</p>
+
+          <h4>Jimak (Hubungan Suami-Istri)</h4>
+          <p>Salah satu pelanggaran paling berat dalam ibadah haji dan umroh adalah melakukan hubungan suami-istri (jimak) sebelum tahallul awal. Dalam haji, apabila hal ini dilakukan sebelum jamaah menyelesaikan tahallul awal—yaitu sebelum melempar jumrah Aqabah, mencukur rambut, dan melakukan tawaf ifadhah—maka hajinya batal. Meskipun demikian, jamaah tetap wajib melanjutkan seluruh rangkaian ibadah haji hingga selesai. Setelah itu, ia diwajibkan mengqadha hajinya pada tahun berikutnya serta membayar dam berupa seekor unta. Jika tidak mampu, ada urutan pengganti berupa sapi, kambing, sedekah, atau puasa.</p>
+          <p>Berbeda jika jimak dilakukan setelah tahallul awal, maka haji tetap sah, tetapi tetap dikenakan dam berupa seekor kambing. Dalam umroh, jimak yang dilakukan sebelum tahallul juga menyebabkan umroh batal. Jamaah tetap harus menyelesaikan ibadahnya, mengqadhanya di waktu lain, serta membayar dam berupa seekor kambing.</p>
+
+          <h4>Meninggalkan Wuquf di Arafah</h4>
+          <p>Meninggalkan wuquf di Arafah merupakan penyebab batalnya haji. Wuquf adalah rukun paling utama dalam haji, bahkan Rasulullah SAW menyatakan bahwa haji itu adalah Arafah. Wuquf dilaksanakan pada tanggal 9 Zulhijjah dari waktu Zuhur hingga fajar 10 Zulhijjah. Jika seseorang tidak melaksanakan wuquf, maka hajinya tidak sah dan harus diulang, tanpa ada dam yang bisa menggantikannya.</p>
+
+          <h4>Meninggalkan Tawaf Ifadhah, Sa'i, dan Tahallul</h4>
+          <p>Rukun lain yang tidak boleh ditinggalkan adalah tawaf ifadhah. Tawaf merupakan ibadah mengelilingi Ka'bah sebanyak tujuh kali dan menjadi bagian penting dalam haji maupun umroh. Jika tawaf ini tidak dilakukan, maka ibadah tersebut tidak sah dan tidak dapat diganti dengan dam. Hal yang sama berlaku untuk sa'i antara bukit Shafa dan Marwah. Sa'i merupakan rukun yang wajib dilakukan, sehingga jika ditinggalkan, haji atau umroh menjadi batal.</p>
+          <p>Tahallul, yaitu mencukur atau memendekkan rambut sebagai tanda keluar dari ihram, juga termasuk rukun. Jika tahallul tidak dilakukan, maka ibadah menjadi tidak sah. Selain itu, urutan dalam melaksanakan rukun juga harus diperhatikan. Tertib merupakan bagian dari rukun, sehingga pelaksanaan yang tidak sesuai urutan dapat menyebabkan ibadah tidak sah.</p>
+
+          <h4>Konsep Dam dan Kafarat</h4>
+          <p>Dalam pelaksanaan haji dan umroh, terdapat juga konsep dam dan kafarat. Dam adalah penyembelihan hewan sebagai bentuk tebusan atas pelanggaran atau kelalaian dalam ibadah. Dam bukan hanya hukuman, tetapi juga bentuk tanggung jawab dan penyucian diri.</p>
+          <p>Dam yang paling berat dikenakan pada pelanggaran jimak sebelum tahallul awal dalam haji. Selain membatalkan haji, pelanggaran ini mewajibkan penyembelihan hewan dengan urutan tertentu, dimulai dari unta hingga puasa sebagai alternatif terakhir.</p>
+          <p>Tidak semua pelanggaran menyebabkan ibadah menjadi batal. Meninggalkan wajib haji, seperti tidak mabit di Muzdalifah atau Mina, tidak membatalkan haji, tetapi mewajibkan dam berupa seekor kambing. Jika tidak mampu, dapat diganti dengan puasa tiga hari di tanah suci dan tujuh hari setelah kembali ke tanah air.</p>
+          <p>Selain itu, terdapat dam fidyah yang dikenakan ketika seseorang melanggar larangan ihram, seperti mencukur rambut, memotong kuku, memakai parfum, atau memakai pakaian berjahit bagi laki-laki. Dalam hal ini, jamaah diberi pilihan antara menyembelih kambing, berpuasa tiga hari, atau bersedekah kepada fakir miskin.</p>
+          <p>Pelanggaran lain adalah membunuh atau berburu binatang darat saat ihram. Dalam hal ini, jamaah wajib mengganti dengan hewan yang sepadan nilainya. Jika tidak mampu, dapat diganti dengan memberi makan fakir miskin atau berpuasa sesuai ketentuan.</p>
+
+          <div class="materi-info-box">
+            <p>Para ulama memiliki perbedaan pendapat terkait pelanggaran yang dilakukan tanpa sengaja. Mazhab Syafi'i tetap mewajibkan dam, sedangkan sebagian ulama lain memberikan keringanan bagi yang benar-benar tidak mengetahui atau lupa.</p>
+          </div>
+
+          <p>Dengan memahami hal-hal yang membatalkan haji dan umroh serta ketentuan dam dan kafarat, diharapkan setiap muslim dapat melaksanakan ibadah dengan lebih hati-hati, penuh kesadaran, dan sesuai dengan tuntunan syariat.</p>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 1.7 -->
+        <div id="sub-1-7" class="materi-sub">
+          <h3>1.7 Game Interaktif</h3>
+          <p>Uji pemahamanmu tentang konsep dasar haji dan umroh melalui game interaktif berikut:</p>
+          <a href="https://gemini.google.com/share/199e21d7c16b" target="_blank" rel="noopener" class="materi-external-link">
+            🎮 Mainkan Game Bab 1
+          </a>
+        </div>
+      </div>
+
+      <!-- ==============================
+           BAB 2: ALUR RANGKAIAN IBADAH
+           ============================== -->
+      <div class="materi-section" id="bab2-content">
+        <h2>Bab 2: Alur Rangkaian Ibadah</h2>
+
+        <!-- Subbab 2.1 -->
+        <div id="sub-2-1" class="materi-sub">
+          <h3>2.1 Alur Rangkaian Ibadah Haji</h3>
+          <img
+            src="https://i.ibb.co.com/PvfS4JNm/Chat-GPT-Image-2-Mei-2026-14-36-10.png"
+            alt="Infografis alur rangkaian ibadah haji"
+            class="materi-img"
+          >
+
+          <h4>1. Ihram Haji (8 Dzulhijjah)</h4>
+          <p>Pada tanggal 8 Dzulhijjah, jemaah memulai rangkaian haji dengan melakukan niat ihram.</p>
+          <p><strong>Persiapan:</strong> Jemaah melakukan mandi sunnah, memakai wewangian (pada tubuh, bukan pada pakaian ihram), dan mengenakan dua helai kain putih bagi laki-laki atau pakaian yang menutup aurat bagi perempuan.</p>
+          <p><strong>Niat:</strong> Jemaah mengucapkan niat haji (biasanya di hotel bagi jemaah haji Tamattu') dan sejak saat itu, seluruh larangan ihram berlaku.</p>
+
+          <h4>2. Mabit di Mina / Hari Tarwiyah (8 Dzulhijjah)</h4>
+          <p>Jemaah bergerak menuju Mina untuk bermalam (mabit).</p>
+          <p><strong>Makna Tarwiyah:</strong> Dinamakan hari Tarwiyah (hari "mengairi") karena pada zaman dahulu jemaah mempersiapkan perbekalan air untuk dibawa ke Arafah.</p>
+          <p><strong>Kegiatan:</strong> Di Mina, jemaah melaksanakan shalat Dzuhur, Ashar, Maghrib, Isya, dan Subuh secara qashar (diringkas) namun tetap pada waktunya masing-masing (tidak dijam'). Hal ini merupakan sunnah muakkadah yang ditekankan dalam tuntunan Tarjih untuk mengikuti jejak Rasulullah SAW.</p>
+
+          <h4>3. Wukuf di Arafah (9 Dzulhijjah)</h4>
+          <p>Wukuf adalah puncak atau inti dari ibadah haji; tanpa wukuf, haji seseorang tidak sah.</p>
+          <p><strong>Waktu:</strong> Dilaksanakan mulai dari tergelincirnya matahari (waktu Dzuhur) hingga terbenamnya matahari.</p>
+          <p><strong>Kegiatan Utama:</strong> Mendengarkan khutbah wukuf, melakukan shalat Dzuhur dan Ashar secara jam' takdim qashar, serta memperbanyak doa, dzikir, dan istighfar dengan menghadap kiblat.</p>
+
+          <h4>4. Mabit di Muzdalifah (Malam 10 Dzulhijjah)</h4>
+          <p>Setelah matahari terbenam di Arafah, jemaah berangkat menuju Muzdalifah.</p>
+          <p><strong>Hukum Mabit:</strong> Berhenti atau bermalam di Muzdalifah setidaknya hingga melewati tengah malam.</p>
+          <p><strong>Logistik:</strong> Jemaah mengumpulkan 7 butir batu kerikil untuk digunakan melontar Jumrah Aqabah keesokan harinya. Shalat Maghrib dan Isya dilaksanakan di sini secara jam' takhir qashar.</p>
+
+          <h4>5. Lontar Jumrah Aqabah & Tahallul (10 Dzulhijjah)</h4>
+          <p>Tanggal 10 Dzulhijjah bertepatan dengan Hari Raya Idul Adha.</p>
+          <p><strong>Lontar Jumrah:</strong> Jemaah menuju jamarat untuk melempar 7 batu kerikil ke pilar Aqabah saja.</p>
+          <p><strong>Tahallul Awal:</strong> Setelah melontar, jemaah mencukur atau memotong rambut. Dengan ini, sebagian besar larangan ihram dicabut (kecuali hubungan suami-istri).</p>
+
+          <h4>6. Penyembelihan Hewan Dam/Kurban</h4>
+          <p>Bagi jemaah Haji Tamattu' (yang melaksanakan umroh dulu baru haji), diwajibkan menyembelih seekor kambing sebagai hadyu atau dam. Ini adalah bentuk syukur dan pengorbanan kepada Allah SWT.</p>
+
+          <h4>7. Thawaf Ifadhah & Sa'i Haji</h4>
+          <p>Jemaah kembali ke Makkah (Masjidil Haram) untuk melaksanakan rukun haji berikutnya.</p>
+          <p><strong>Thawaf Ifadhah:</strong> Mengelilingi Ka'bah 7 putaran.</p>
+          <p><strong>Sa'i Haji:</strong> Berjalan dari Shafa ke Marwah 7 kali. Jika sudah melakukan Thawaf Ifadhah dan Sa'i, jemaah melakukan Tahallul Tsani, yang berarti seluruh larangan ihram (termasuk hubungan suami-istri) kini telah diperbolehkan.</p>
+
+          <h4>8. Mabit di Mina & Lontar Tiga Jumrah (11-13 Dzulhijjah)</h4>
+          <p>Jemaah kembali ke Mina selama hari Tasyrik.</p>
+          <p><strong>Kegiatan:</strong> Melempar tiga jumrah (Ula, Wustha, dan Aqabah) masing-masing 7 kali setiap harinya.</p>
+          <p><strong>Nafar:</strong> Jemaah bisa memilih Nafar Awal (meninggalkan Mina pada 12 Dzulhijjah sebelum maghrib) atau Nafar Tsani (bertahan hingga 13 Dzulhijjah).</p>
+
+          <h4>9. Thawaf Wada'</h4>
+          <p>Sebagai penutup, jemaah melaksanakan thawaf perpisahan sebelum meninggalkan kota Makkah menuju tanah air atau Madinah. Thawaf ini tidak disertai dengan sa'i.</p>
+
+          <!-- Video Canva -->
+          <p><strong>Video pembelajaran alur ibadah haji:</strong></p>
+          <div class="embed-container">
+            <iframe
+              src="https://www.canva.com/design/DAHIqS2E7v0/lFdgQTA9Gmf85khZnDJb_A/watch?embed"
+              allowfullscreen="allowfullscreen"
+              allow="fullscreen"
+              loading="lazy"
+            ></iframe>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--accent);">Desain oleh Zayyan Novalaziz</p>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 2.2 -->
+        <div id="sub-2-2" class="materi-sub">
+          <h3>2.2 Alur Rangkaian Ibadah Umroh</h3>
+          <p>Simak video pembelajaran mengenai alur rangkaian ibadah umroh berikut:</p>
+          <div class="embed-container">
+            <iframe
+              src="https://www.youtube.com/embed/vuquArQIT4U"
+              allowfullscreen="allowfullscreen"
+              allow="fullscreen"
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 2.3 -->
+        <div id="sub-2-3" class="materi-sub">
+          <h3>2.3 Game Interaktif</h3>
+          <p>Uji pemahamanmu tentang alur rangkaian ibadah haji dan umroh melalui game berikut:</p>
+          <a href="https://gemini.google.com/share/c5d605910dd6" target="_blank" rel="noopener" class="materi-external-link">
+            🎮 Mainkan Game Bab 2
+          </a>
+        </div>
+      </div>
+
+      <!-- ==============================
+           BAB 3: ZIARAH & KOTA SUCI
+           ============================== -->
+      <div class="materi-section" id="bab3-content">
+        <h2>Bab 3: Ziarah & Kota Suci</h2>
+
+        <!-- Subbab 3.1 -->
+        <div id="sub-3-1" class="materi-sub">
+          <h3>3.1 Keutamaan Makkah & Madinah</h3>
+          <p>Pelajari keutamaan kota Makkah dan Madinah melalui materi visual berikut:</p>
+          <a href="https://www.canva.com/design/DAHIf-sXLVc/xY1zw2fpSDof6yYyU6dX6Q/view" target="_blank" rel="noopener" class="materi-external-link">
+            📖 Buka Materi Keutamaan Makkah & Madinah
+          </a>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 3.2 -->
+        <div id="sub-3-2" class="materi-sub">
+          <h3>3.2 Adab di Masjid Nabawi</h3>
+          <!-- GANTI: Isi materi adab di Masjid Nabawi -->
+          <div class="materi-info-box">
+            <p>📝 Materi tentang adab di Masjid Nabawi akan ditambahkan pada pengembangan berikutnya.</p>
+          </div>
+        </div>
+
+        <hr class="materi-divider">
+
+        <!-- Subbab 3.3 -->
+        <div id="sub-3-3" class="materi-sub">
+          <h3>3.3 Situs Sejarah</h3>
+          <p>Simak video pembelajaran tentang situs-situs sejarah di tanah suci:</p>
+          <div class="embed-container">
+            <iframe
+              src="https://www.youtube.com/embed/Qm-tNo5T-Nk"
+              allowfullscreen="allowfullscreen"
+              allow="fullscreen"
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================
+           BAB 4: KUMPULAN DOA
+           ============================== -->
+      <div class="materi-section" id="bab4-content">
+        <h2>Bab 4: Kumpulan Doa</h2>
+
+        <!-- Subbab 4.1 -->
+        <div id="sub-4-1" class="materi-sub">
+          <h3>4.1 Kumpulan Doa Manasik</h3>
+          <p>Buka kumpulan doa-doa manasik haji dan umroh melalui materi visual berikut:</p>
+          <a href="https://www.canva.com/design/DAHIgMuOij8/v3etyEsx0xxedw--Voma4g/view" target="_blank" rel="noopener" class="materi-external-link">
+            🤲 Buka Kumpulan Doa Manasik
+          </a>
+        </div>
+      </div>
+
+      <!-- ==============================
+           BAB 5: LATIHAN & KUIS
+           ============================== -->
+      <div class="materi-section" id="bab5-content">
+        <h2>Bab 5: Latihan & Kuis</h2>
+
+        <!-- Subbab 5.1 -->
+        <div id="sub-5-1" class="materi-sub">
+          <h3>5.1 Kuis Interaktif</h3>
+          <p>Uji kemampuanmu dalam memahami seluruh materi haji dan umroh yang telah dipelajari melalui kuis interaktif berikut:</p>
+          <a href="https://gemini.google.com/share/a5ceb6e909d4" target="_blank" rel="noopener" class="materi-external-link">
+            📝 Mulai Kuis
+          </a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Script utama (untuk navbar, fallback gambar, dll) -->
+  <script src="script.js"></script>
+
+  <!-- 
+    Script tambahan khusus halaman belajar (LMS).
+    Menangani: sidebar toggle, collapsible bab, highlight subbab aktif.
+  -->
+  <script>
+    /* === TOGGLE SIDEBAR (MOBILE) === */
+    const lmsToggle = document.getElementById('lmsToggle');
+    const lmsSidebar = document.getElementById('lmsSidebar');
+    const lmsOverlay = document.getElementById('lmsOverlay');
+
+    if (lmsToggle && lmsSidebar && lmsOverlay) {
+      // Buka/tutup sidebar
+      lmsToggle.addEventListener('click', function () {
+        lmsSidebar.classList.toggle('open-mobile');
+        lmsOverlay.classList.toggle('show');
+      });
+
+      // Tutup sidebar saat overlay diklik
+      lmsOverlay.addEventListener('click', function () {
+        lmsSidebar.classList.remove('open-mobile');
+        lmsOverlay.classList.remove('show');
+      });
+    }
+
+
+    /* === COLLAPSIBLE BAB DI SIDEBAR === */
+    // Klik judul bab untuk membuka/menutup daftar subbab
+    const babTitles = document.querySelectorAll('.lms-bab-title');
+
+    babTitles.forEach(function (title) {
+      title.addEventListener('click', function () {
+        const babId = this.getAttribute('data-bab');
+        const subList = document.getElementById(babId);
+
+        // Toggle class active pada tombol
+        this.classList.toggle('active');
+
+        // Toggle class open pada daftar subbab
+        if (subList) {
+          subList.classList.toggle('open');
+        }
+      });
+    });
+
+
+    /* === KLIK SUBBAB → SCROLL KE KONTEN === */
+    const subLinks = document.querySelectorAll('.lms-sub-link');
+
+    subLinks.forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          // Scroll ke konten subbab
+          const offsetTop = targetElement.offsetTop - 84;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+
+          // Highlight subbab yang aktif
+          subLinks.forEach(function (l) {
+            l.classList.remove('active-sub');
+          });
+          this.classList.add('active-sub');
+
+          // Tutup sidebar di mobile setelah memilih subbab
+          if (lmsSidebar && lmsOverlay) {
+            lmsSidebar.classList.remove('open-mobile');
+            lmsOverlay.classList.remove('show');
+          }
+        }
+      });
+    });
+
+
+    /* === HIGHLIGHT SUBBAB AKTIF SAAT SCROLL === */
+    // Mendeteksi section mana yang sedang terlihat dan highlight subbab-nya
+    const allSubSections = document.querySelectorAll('.materi-sub[id]');
+
+    if ('IntersectionObserver' in window) {
+      const scrollObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+
+            // Hapus highlight dari semua subbab
+            subLinks.forEach(function (l) {
+              l.classList.remove('active-sub');
+            });
+
+            // Tambahkan highlight ke subbab yang sesuai
+            const activeLink = document.querySelector('.lms-sub-link[href="#' + id + '"]');
+            if (activeLink) {
+              activeLink.classList.add('active-sub');
             }
-        }
-
-        // Tandai selesai / batalkan (toggle)
-        function done(id) { var p = ld(); if (p[id]) delete p[id]; else p[id] = true; sv(p); up(); }
-
-        // Navigasi ke halaman konten
-        function go(id, lnk) {
-            // Sembunyikan semua halaman
-            var pages = document.querySelectorAll('.pg');
-            for (var i = 0; i < pages.length; i++) pages[i].classList.remove('on');
-
-            // Hapus highlight sidebar
-            var links = document.querySelectorAll('.sub');
-            for (var j = 0; j < links.length; j++) links[j].classList.remove('on');
-
-            // Tampilkan halaman yang diminta
-            var pg = document.getElementById('p-' + id);
-            if (pg) pg.classList.add('on');
-
-            // Highlight sidebar
-            if (lnk) lnk.classList.add('on');
-            else { var al = document.querySelector('[data-t="' + id + '"]'); if (al) al.classList.add('on'); }
-
-            // Buka chapter yang mengandung subbab
-            if (lnk) {
-                var ch = lnk.closest('.ch');
-                if (ch) { var hd = ch.querySelector('.ch-head'); if (hd && !hd.classList.contains('open')) hd.classList.add('open'); }
-            }
-
-            // Scroll ke atas
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Tutup sidebar mobile
-            clSB();
-        }
-
-        // Toggle chapter (collapse/expand)
-        function togCh(el) { el.classList.toggle('open'); }
-
-        // Buka sidebar mobile
-        function opSB() {
-            document.getElementById('lmsSB').classList.add('on');
-            document.getElementById('sbOv').classList.add('on');
-        }
-
-        // Tutup sidebar mobile
-        function clSB() {
-            document.getElementById('lmsSB').classList.remove('on');
-            document.getElementById('sbOv').classList.remove('on');
-        }
-
-        // Inisialisasi saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('hBurger').addEventListener('click', opSB);
-            document.getElementById('sbOv').addEventListener('click', clSB);
-            up();
+          }
         });
-    </script>
+      }, {
+        threshold: 0.2,
+        rootMargin: '-80px 0px -60% 0px'
+      });
 
+      allSubSections.forEach(function (section) {
+        scrollObserver.observe(section);
+      });
+    }
+  </script>
 </body>
 </html>
